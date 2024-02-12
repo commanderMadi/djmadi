@@ -17,7 +17,8 @@
 //==============================================================================
 /*
 */
-class PlaylistComponent  : public juce::Component, public juce::TableListBoxModel, public juce::Button::Listener
+class PlaylistComponent  : public juce::Component, public juce::TableListBoxModel, public juce::Button::Listener, public juce::FileDragAndDropTarget
+
 {
 public:
     PlaylistComponent();
@@ -34,9 +35,12 @@ public:
     // Button::Listener pure virtual function
     void buttonClicked(juce::Button* button) override;
     
-    void loadFile (juce::File audioFile);
-    
+
+    bool isInterestedInFileDrag(const juce::StringArray &files) override;
+    void filesDropped(const juce::StringArray &files, int x, int y) override;
+
 private:
+    juce::AudioFormatManager formatManager;
     juce::TableListBox tableComponent;
     std::vector<juce::String>trackTitles;
     juce::TextButton addToPlaylistButton;

@@ -18,6 +18,8 @@ PlaylistComponent::PlaylistComponent()
     // initialise any special settings that your component needs.
 
     tableComponent.getHeader().addColumn("Track Title", 1, 400);
+    tableComponent.getHeader().addColumn("Control", 2, 100);
+
     tableComponent.setModel(this);
     
     addAndMakeVisible(tableComponent);
@@ -115,6 +117,17 @@ void PlaylistComponent::buttonClicked(juce::Button *button) {
         });
     }
 }
-
-void PlaylistComponent::loadFile (juce::File audioFile) {
+bool PlaylistComponent::isInterestedInFileDrag(const juce::StringArray &files) {
+    std::cout << "DeckGUI::isInterestedInFileDrag" << std::endl;
+    return true;
 }
+void PlaylistComponent::filesDropped(const juce::StringArray &files, int x, int y) {
+    std::cout << "DeckGUI::filesDropped" << std::endl;
+    
+    if (files.size() == 1) {
+        trackTitles.push_back(files[0]);
+        tableComponent.updateContent();
+    }
+
+}
+
