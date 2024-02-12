@@ -1,0 +1,6 @@
+Builds/
+JUCE/
+build/
+.vscode/
+.DS_Store
+*.txt

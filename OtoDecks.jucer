@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="EKVzvS" name="DJMadi" projectType="guiapp" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
+              defines="JUCE_SILENCE_XCODE_15_LINKER_WARNING&#10;JUCE_USE_MP3AUDIOFORMAT">
+  <MAINGROUP id="UFS9R8" name="DJMadi">
+    <GROUP id="{95879CB2-6D3C-9EEE-C30E-B51CFC6F1854}" name="Source">
+      <FILE id="wnyJeZ" name="PlaylistComponent.cpp" compile="1" resource="0"
+            file="Source/PlaylistComponent.cpp"/>
+      <FILE id="ozBgce" name="PlaylistComponent.h" compile="0" resource="0"
+            file="Source/PlaylistComponent.h"/>
+      <FILE id="l5NU5o" name="WaveFormDisplay.cpp" compile="1" resource="0"
+            file="Source/WaveFormDisplay.cpp"/>
+      <FILE id="m0bqn8" name="WaveFormDisplay.h" compile="0" resource="0"
+            file="Source/WaveFormDisplay.h"/>
+      <FILE id="vyMU3S" name="DeckGUI.cpp" compile="1" resource="0" file="Source/DeckGUI.cpp"/>
+      <FILE id="vPua9g" name="DeckGUI.h" compile="0" resource="0" file="Source/DeckGUI.h"/>
+      <FILE id="OgY3pc" name="DJAudioPlayer.cpp" compile="1" resource="0"
+            file="Source/DJAudioPlayer.cpp"/>
+      <FILE id="iLi5aI" name="DJAudioPlayer.h" compile="0" resource="0" file="Source/DJAudioPlayer.h"/>
+      <FILE id="Ec7OZB" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="Yh1oA8" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="Lw7QaT" name="MainComponent.cpp" compile="1" resource="1"
+            file="Source/MainComponent.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+  <EXPORTFORMATS>
+    <ANDROIDSTUDIO targetFolder="Builds/Android">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="OtoDecks"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="OtoDecks"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../Developer/JUCE/modules"/>
+      </MODULEPATHS>
+    </ANDROIDSTUDIO>
+    <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="OtoDecks"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="OtoDecks"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../Developer/JUCE/modules"/>
+      </MODULEPATHS>
+    </LINUX_MAKE>
+    <VS2017 targetFolder="Builds/VisualStudio2017">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="OtoDecks"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="OtoDecks"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../Developer/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2017>
+    <VS2019 targetFolder="Builds/VisualStudio2019">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="OtoDecks"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="OtoDecks"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../Developer/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2019>
+    <VS2022 targetFolder="Builds/VisualStudio2022">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="OtoDecks"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="OtoDecks"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../Developer/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2022>
+    <XCODE_IPHONE targetFolder="Builds/iOS">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="OtoDecks"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="OtoDecks"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../Developer/JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_IPHONE>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="OtoDecks"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="OtoDecks"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../Developer/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../Developer/JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+</JUCERPROJECT>
