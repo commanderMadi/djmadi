@@ -17,7 +17,7 @@ static const unsigned char temp_binary_data_0[] =
 "MainComponent::MainComponent() {\r\n"
 "    // Make sure you set the size of the component after\r\n"
 "    // you add any child components.\r\n"
-"    setSize(800, 600);\r\n"
+"    setSize(800, 800);\r\n"
 "\r\n"
 "    // Some platforms require permissions to open input channels so request that here\r\n"
 "    if (juce::RuntimePermissions::isRequired(juce::RuntimePermissions::recordAudio) &&\r\n"
@@ -62,7 +62,7 @@ static const unsigned char temp_binary_data_0[] =
 "void MainComponent::resized() {\r\n"
 "    deck1.setBounds(0, 0, getWidth()/2, getHeight()/2);\r\n"
 "    deck2.setBounds(getWidth()/2, 0, getWidth()/2, getHeight()/2);\r\n"
-"    playlist.setBounds(0, getHeight()/2, getWidth(), getHeight()/2);\r\n"
+"    playlist.setBounds(0, getWidth()/2, getWidth(), getHeight()/2);\r\n"
 "\r\n"
 "}\r\n"
 "\r\n"
@@ -89,7 +89,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
 
     switch (hash)
     {
-        case 0x39024608:  numBytes = 2296; return MainComponent_cpp;
+        case 0x39024608:  numBytes = 2295; return MainComponent_cpp;
         default: break;
     }
 
