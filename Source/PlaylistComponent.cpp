@@ -17,7 +17,6 @@ PlaylistComponent::PlaylistComponent()
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
-    
     tableComponent.getHeader().addColumn("Track Title", 1, 400);
     tableComponent.setModel(this);
     
@@ -97,18 +96,25 @@ void PlaylistComponent::buttonClicked(juce::Button *button) {
     }
     if (button == &addToPlaylistButton) {
         std::cout << "PlaylistComponent::buttonClicked for the add to playlist button" << std::endl;
+
         // - configure the dialogue
-        auto fileChooserFlags =
-        juce::FileBrowserComponent::canSelectFiles;
+        auto fileChooserFlags = juce::FileBrowserComponent::canSelectFiles;
+
         // - launch out of the main thread
-        // - note how we use a lambda function which you've probably
-        // not seen before. Please do not worry too much about that
-        // but it is necessary as of JUCE 6.1
-        fChooser.launchAsync(fileChooserFlags,
-        [this](const juce::FileChooser& chooser) {
+        fChooser.launchAsync(fileChooserFlags, [this](const juce::FileChooser& chooser) {
             auto chosenFile = chooser.getResult();
+            juce::String fileName = chosenFile.getFileName();
+
+            // Use MessageManager to execute this code on the message thread
+            juce::MessageManager::callAsync([this, fileName]() {
+                // Update the UI components on the message thread
+                trackTitles.push_back(fileName);
+                tableComponent.updateContent();
+
+            });
         });
     }
 }
+
 void PlaylistComponent::loadFile (juce::File audioFile) {
 }

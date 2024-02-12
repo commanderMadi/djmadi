@@ -38,7 +38,7 @@ public:
     
 private:
     juce::TableListBox tableComponent;
-    std::vector<std::string>trackTitles;
+    std::vector<juce::String>trackTitles;
     juce::TextButton addToPlaylistButton;
     juce::FileChooser fChooser{"Select a file..."};
 
