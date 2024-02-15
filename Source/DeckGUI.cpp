@@ -70,8 +70,8 @@ void DeckGUI::buttonClicked(juce::Button* button) {
         fChooser.launchAsync(fileChooserFlags,
         [this](const juce::FileChooser& chooser) {
             auto chosenFile = chooser.getResult();
-            djAudioPlayer->loadFile(chosenFile);
-            waveFormDisplay.loadFile(chosenFile); 
+            djAudioPlayer->loadURL(juce::URL{chosenFile});
+            waveFormDisplay.loadURL(juce::URL{chosenFile});
         });
         }
     }
@@ -112,18 +112,6 @@ void DeckGUI::resized() {
     loadButton.setBounds(0, rowH*7, getWidth(), rowH);
 }
 
-bool DeckGUI::isInterestedInFileDrag(const juce::StringArray &files) {
-    std::cout << "DeckGUI::isInterestedInFileDrag" << std::endl;
-    return true;
-}
-void DeckGUI::filesDropped(const juce::StringArray &files, int x, int y) {
-    std::cout << "DeckGUI::filesDropped" << std::endl;
-    
-    if (files.size() == 1) {
-        djAudioPlayer->loadFile(juce::File{files[0]});
-    }
-
-}
 
 void DeckGUI::timerCallback() {
     waveFormDisplay.setRelativePosition(djAudioPlayer->getRelativePosition());

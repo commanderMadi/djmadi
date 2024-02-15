@@ -5,6 +5,7 @@
               defines="JUCE_SILENCE_XCODE_15_LINKER_WARNING&#10;JUCE_USE_MP3AUDIOFORMAT">
   <MAINGROUP id="UFS9R8" name="DJMadi">
     <GROUP id="{95879CB2-6D3C-9EEE-C30E-B51CFC6F1854}" name="Source">
+      <FILE id="lBsUPa" name="testJSON.cpp" compile="1" resource="0" file="Source/testJSON.cpp"/>
       <FILE id="wnyJeZ" name="PlaylistComponent.cpp" compile="1" resource="0"
             file="Source/PlaylistComponent.cpp"/>
       <FILE id="ozBgce" name="PlaylistComponent.h" compile="0" resource="0"
