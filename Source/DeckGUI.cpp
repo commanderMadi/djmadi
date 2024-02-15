@@ -70,8 +70,8 @@ void DeckGUI::buttonClicked(juce::Button* button) {
         fChooser.launchAsync(fileChooserFlags,
         [this](const juce::FileChooser& chooser) {
             auto chosenFile = chooser.getResult();
-            djAudioPlayer->loadFile(chosenFile);
-            waveFormDisplay.loadFile(chosenFile); 
+            djAudioPlayer->loadURL(juce::URL{chosenFile});
+            waveFormDisplay.loadURL(juce::URL{chosenFile});
         });
         }
     }
