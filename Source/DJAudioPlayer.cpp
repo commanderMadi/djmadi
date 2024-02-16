@@ -40,21 +40,6 @@ void DJAudioPlayer::loadFile(juce::File audioFile){
     std::cout << "Something went wrong while loading the file " << std::endl;
     }
 }
-void DJAudioPlayer::loadURL(juce::URL audioURL) {
-    auto* reader = formatManager.createReaderFor(audioURL.createInputStream(false));
-    if (reader != nullptr)
-    {
-    std::unique_ptr<juce::AudioFormatReaderSource> newSource
-    (new juce::AudioFormatReaderSource (reader, true));
-    transportSource.setSource (newSource.get(),
-    0, nullptr, reader->sampleRate);
-    readerSource.reset (newSource.release());
-    }
-    else
-    {
-    std::cout << "Something went wrong while loading the file " << std::endl;
-    }
-}
 
 void DJAudioPlayer::setGain(double gain){
     if (gain < 0 || gain > 1) {

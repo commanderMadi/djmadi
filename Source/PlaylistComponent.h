@@ -13,6 +13,9 @@
 #include <JuceHeader.h>
 #include <vector>
 #include <string>
+#include <functional>
+#include "DeckGUI.h"
+
 
 //==============================================================================
 /*
@@ -37,6 +40,13 @@ public:
       
     bool isInterestedInFileDrag(const juce::StringArray &files) override;
     void filesDropped(const juce::StringArray &files, int x, int y) override;
+    
+    // a callback function that will pass down the track URL and the deck ID from the playlist component down to the deck
+     
+    using LoadIntoDeckCallback = std::function<void(const juce::String&, int)>;
+
+    // Setting up the callback function
+    void setLoadIntoDeckCallback(LoadIntoDeckCallback callback);
 
 private:
     juce::File storageDirectory{juce::File::getSpecialLocation(juce::File::SpecialLocationType::userDocumentsDirectory)};
@@ -48,6 +58,7 @@ private:
     std::vector<juce::String>trackDurations;
     juce::TextButton addToPlaylistButton;
     juce::FileChooser fChooser{"Select a file..."};
+    LoadIntoDeckCallback loadIntoDeckCallback;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlaylistComponent)
 };

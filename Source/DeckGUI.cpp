@@ -17,7 +17,6 @@ DeckGUI::DeckGUI(DJAudioPlayer* _djAudioPlayer, juce::AudioFormatManager &format
     // initialise any special settings that your component needs.
     addAndMakeVisible(playButton);
     addAndMakeVisible(stopButton);
-    addAndMakeVisible(loadButton);
 
     addAndMakeVisible(gainSlider);
     addAndMakeVisible(speedSlider);
@@ -28,12 +27,9 @@ DeckGUI::DeckGUI(DJAudioPlayer* _djAudioPlayer, juce::AudioFormatManager &format
     
     playButton.setButtonText("Play");
     stopButton.setButtonText("Stop");
-    loadButton.setButtonText("Load");
     
     playButton.addListener(this);
     stopButton.addListener(this);
-    loadButton.addListener(this);
-    
     
     gainSlider.addListener(this);
     speedSlider.addListener(this);
@@ -58,23 +54,7 @@ void DeckGUI::buttonClicked(juce::Button* button) {
     if (button == &stopButton) {
         djAudioPlayer->stop();
     }
-
-    if (button == &loadButton) {
-        // - configure the dialogue
-        auto fileChooserFlags =
-        juce::FileBrowserComponent::canSelectFiles;
-        // - launch out of the main thread
-        // - note how we use a lambda function which you've probably
-        // not seen before. Please do not worry too much about that
-        // but it is necessary as of JUCE 6.1
-        fChooser.launchAsync(fileChooserFlags,
-        [this](const juce::FileChooser& chooser) {
-            auto chosenFile = chooser.getResult();
-            djAudioPlayer->loadURL(juce::URL{chosenFile});
-            waveFormDisplay.loadURL(juce::URL{chosenFile});
-        });
-        }
-    }
+}
 void DeckGUI::sliderValueChanged(juce::Slider* slider) {
     if (slider == &gainSlider) {
         std::cout << "Gain Slider Value Updated: " << slider->getValue() << std::endl;
@@ -109,10 +89,29 @@ void DeckGUI::resized() {
     posSlider.setBounds(0, rowH*3, getWidth(), rowH);
     speedSlider.setBounds(0, rowH*4, getWidth(), rowH);
     waveFormDisplay.setBounds(0, rowH*5, getWidth(), rowH*2);
-    loadButton.setBounds(0, rowH*7, getWidth(), rowH);
 }
 
 
 void DeckGUI::timerCallback() {
     waveFormDisplay.setRelativePosition(djAudioPlayer->getRelativePosition());
+}
+
+void DeckGUI::loadFileIntoDeck(const juce::String& trackURL, int deckId) {
+    // Load the file into the appropriate deck based on the deckId
+    juce::File file(trackURL);
+
+    if (deckId == 1) {
+        // Load into Deck 1
+        // Implement your logic here
+        std::cout << "Loading into Deck 1: " << trackURL << std::endl;
+        djAudioPlayer->loadFile(file);
+        waveFormDisplay.loadFile(file);
+    } else if (deckId == 2) {
+        // Load into Deck 2
+        // Implement your logic here
+        djAudioPlayer->loadFile(file);
+        waveFormDisplay.loadFile(file);
+        std::cout << "Loading into Deck 2: " << trackURL << std::endl;
+    }
+    // Add more conditions if you have additional decks
 }

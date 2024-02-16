@@ -19,7 +19,9 @@ PlaylistComponent::PlaylistComponent()
 
     tableComponent.getHeader().addColumn("Track Title", 1, 300);
     tableComponent.getHeader().addColumn("Track Duration (secs)", 2, 150);
-    tableComponent.getHeader().addColumn("Control", 3, 100);
+    tableComponent.getHeader().addColumn("Load Into", 3, 100);
+    tableComponent.getHeader().addColumn("Load Into", 4, 100);
+
 
     tableComponent.setModel(this);
     
@@ -117,7 +119,19 @@ juce::Component* PlaylistComponent::refreshComponentForCell(int rowNumber, int c
     if (columnId == 3) {
         if (existingComponentToUpdate == nullptr) {
             
-            juce::TextButton* btn = new juce::TextButton("play");
+            juce::TextButton* btn = new juce::TextButton("Deck 1");
+            juce::String id{std::to_string(rowNumber)};
+            
+            btn->addListener(this);
+            btn->setComponentID(id);
+            existingComponentToUpdate = btn;
+        }
+    }
+    
+    if (columnId == 4) {
+        if (existingComponentToUpdate == nullptr) {
+            
+            juce::TextButton* btn = new juce::TextButton("Deck 2");
             juce::String id{std::to_string(rowNumber)};
             
             btn->addListener(this);
@@ -131,11 +145,22 @@ juce::Component* PlaylistComponent::refreshComponentForCell(int rowNumber, int c
 
 void PlaylistComponent::buttonClicked(juce::Button *button) {
     if (button != &addToPlaylistButton) {
-        int id = std::stoi(button->getComponentID().toStdString());
-        std::cout << "PlaylistComponent::buttonClicked for the internal playlist button instance" << trackTitles[id] << std::endl;
+//        int id = std::stoi(button->getComponentID().toStdString());
+        int deckId = -1;
+        if (button->getButtonText() == "Deck 1") {
+            deckId = 1;
+        } else if (button->getButtonText() == "Deck 2") {
+            deckId = 2;
+        }
+        if (loadIntoDeckCallback != nullptr) {
+            int rowId = button->getComponentID().getIntValue();
+            // Obtain the stored track URL and send it to the callback call
+            juce::String trackURL = playlistTracks[rowId].getProperty("fileURL", juce::var()).toString();
+            loadIntoDeckCallback(trackURL, deckId);
+        }
+        
     }
     if (button == &addToPlaylistButton) {
-        std::cout << "PlaylistComponent::buttonClicked for the add to playlist button" << std::endl;
 
         // - configure the dialogue
         auto fileChooserFlags = juce::FileBrowserComponent::canSelectFiles;
@@ -195,6 +220,7 @@ void PlaylistComponent::filesDropped(const juce::StringArray &files, int x, int 
         // Create the song dynamic object, this will be stored and written to the JSON playlist file.
         juce::DynamicObject* trackObject = new juce::DynamicObject();
         trackObject->setProperty("id", trackId);
+        trackObject->setProperty("fileURL", fileURLJuce);
         trackObject->setProperty("title", stringifiedTrackTitle);
         trackObject->setProperty("duration", stringifiedTrackDuration);
 
@@ -242,3 +268,16 @@ void PlaylistComponent::filesDropped(const juce::StringArray &files, int x, int 
     }
 
 }
+
+void PlaylistComponent::setLoadIntoDeckCallback(LoadIntoDeckCallback callback) {
+    loadIntoDeckCallback = callback;
+}
+
+
+//void PlaylistComponent::setLoadIntoDeckCallback(LoadIntoDeckCallback callback, DeckGUI* deckGUI) {
+//    loadIntoDeckCallback = [callback, deckGUI](const juce::String& fileURL, int deckId) {
+//        if (callback) {
+//            callback(fileURL, deckId, deckGUI);
+//        }
+//    };
+//}
