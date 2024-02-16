@@ -42,6 +42,7 @@ PlaylistComponent::PlaylistComponent()
         }
     }
     DBG("The app just loaded. There are " << playlistTracks.size() << " tracks in the storage file.");
+    repaint();
 }
 
 PlaylistComponent::~PlaylistComponent()
@@ -70,10 +71,26 @@ void PlaylistComponent::paint (juce::Graphics& g)
 
 void PlaylistComponent::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
+//    // This method is where you should set the bounds of any child
+//    // components that your component contains..
+//    tableComponent.setBounds(0,0, getWidth(), getHeight() / 1.5);
+//    addToPlaylistButton.setBounds(getWidth() - 200, (getHeight() / 2) * 1.5, 200, 50);
+//    
+    for (int i = 0; i < playlistTracks.size(); ++i)
+    {
+        juce::var track = playlistTracks[i];
+        juce::String title = track.getProperty("title", juce::var()).toString();
+        juce::String duration = track.getProperty("duration", juce::var()).toString();
+        
+        trackTitles.push_back(title);
+        trackDurations.push_back(duration);
+    }
+
     tableComponent.setBounds(0,0, getWidth(), getHeight() / 1.5);
     addToPlaylistButton.setBounds(getWidth() - 200, (getHeight() / 2) * 1.5, 200, 50);
+
+    // Update the content after setting the bounds
+    tableComponent.updateContent();
 }
 
 int PlaylistComponent::getNumRows() {
@@ -176,14 +193,16 @@ void PlaylistComponent::filesDropped(const juce::StringArray &files, int x, int 
         juce::String stringifiedTrackTitle = juce::String(trackTitle.c_str());
         
         // Create the song dynamic object, this will be stored and written to the JSON playlist file.
-        juce::DynamicObject* songObject = new juce::DynamicObject();
-        songObject->setProperty("id", trackId);
-        songObject->setProperty("title", stringifiedTrackTitle);
-        songObject->setProperty("duration", stringifiedTrackDuration);
+        juce::DynamicObject* trackObject = new juce::DynamicObject();
+        trackObject->setProperty("id", trackId);
+        trackObject->setProperty("title", stringifiedTrackTitle);
+        trackObject->setProperty("duration", stringifiedTrackDuration);
 
-        juce::var songVar(songObject);
+        juce::var trackObjectVar(trackObject);
+        // This will hold an instance of the playlist updated with the newly added track
         juce::Array<juce::var> updatedPlaylist;
         
+        /** If the playlist json file already exists and has at least 1 song stored, store a copy of it in the updatedPlaylist */
         if (playlistStorageFile.existsAsFile() && playlistStorageFile.getSize() > 0) {
             juce::String content = playlistStorageFile.loadFileAsString();
             playlistTracks = juce::JSON::parse(content);
@@ -192,22 +211,27 @@ void PlaylistComponent::filesDropped(const juce::StringArray &files, int x, int 
             }
         }
         
-        updatedPlaylist.add(songVar);
+        // add the new track to the playlist array
+        updatedPlaylist.add(trackObjectVar);
         
+        // Get the JSON file
         playlistStorageFile = storageDirectory.getChildFile("playlist.json");
         
+        // Open an output stream
         std::unique_ptr<juce::FileOutputStream> output(playlistStorageFile.createOutputStream());
         
+        /** If the file opens normally, overwrite it by setting its position to 0 and truncating it (this is from the docs)*/
         if (output->openedOk()) {
             output->setPosition(0);
             output->truncate();
-            // Write the JSON content to the file
+            // Write the updated JSON content to the file
             juce::JSON::writeToStream(*output, updatedPlaylist);
-            std::cout << "JSON written to file: " << playlistStorageFile.getFullPathName() << std::endl;
         } else {
+            // On save error
             std::cerr << "Failed to open the output file for writing!" << std::endl;
         }
         
+        // Now, make the playlistTracks instance variable store a copy of the updatedPlaylist
         playlistTracks = updatedPlaylist;
         // Close the reader after reading the file
         delete reader;
