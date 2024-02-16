@@ -34,15 +34,18 @@ public:
     
     // Button::Listener pure virtual function
     void buttonClicked(juce::Button* button) override;
-    
-
+      
     bool isInterestedInFileDrag(const juce::StringArray &files) override;
     void filesDropped(const juce::StringArray &files, int x, int y) override;
 
 private:
+    juce::File storageDirectory{juce::File::getSpecialLocation(juce::File::SpecialLocationType::userDocumentsDirectory)};
     juce::AudioFormatManager formatManager;
+    juce::File playlistStorageFile;
+    juce::var playlistTracks;
     juce::TableListBox tableComponent;
     std::vector<juce::String>trackTitles;
+    std::vector<juce::String>trackDurations;
     juce::TextButton addToPlaylistButton;
     juce::FileChooser fChooser{"Select a file..."};
 
