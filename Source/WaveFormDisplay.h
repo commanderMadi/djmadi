@@ -26,7 +26,6 @@ public:
     
     /** TO DO:  remove loadFile when refactoring */
     void loadFile (juce::File file);
-    void loadURL(juce::URL audioURL);
     
     void changeListenerCallback (juce::ChangeBroadcaster* source) override;
     

@@ -69,16 +69,6 @@ void WaveFormDisplay::loadFile (juce::File audioFile) {
 
     }
 }
-void WaveFormDisplay::loadURL(juce::URL audioURL) {
-    audioThumb.clear();
-    fileLoaded = audioThumb.setSource(new juce::URLInputSource(audioURL));
-    if (fileLoaded) {
-        std::cout << "WFD loadFile working properly" << std::endl;
-    } else {
-        std::cout << "WFD loadFile failed to work properly" << std::endl;
-
-    }
-}
 
 void WaveFormDisplay::changeListenerCallback (juce::ChangeBroadcaster* source) {
     std::cout << "Change Received!" << std::endl;

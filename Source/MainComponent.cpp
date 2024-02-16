@@ -20,6 +20,15 @@ MainComponent::MainComponent() {
     
     addAndMakeVisible(playlist);
     
+    /** Setting up a callback for the LoadIntoDeckCallback in the playlist component.
+        The callback is a lambda function capturing the current instance of the MainComponent.
+         This way, I could pass in the track URL and the deck ID from the playlist properly.
+    */
+
+    playlist.setLoadIntoDeckCallback([this](const juce::String& trackURL, int deckId) {
+        loadFileIntoDeck(trackURL, deckId);
+    });
+    
     formatManager.registerBasicFormats();
 }
 
@@ -60,4 +69,13 @@ void MainComponent::paint(juce::Graphics &g)
     g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 
     // Add any other drawing instructions here
+}
+
+// Implementation of loading the track into the selected deck
+void MainComponent::loadFileIntoDeck(const juce::String& trackURL, int deckId) {
+    if (deckId == 1) {
+        deck1.loadFileIntoDeck(trackURL, deckId);
+    } else if (deckId == 2) {
+        deck2.loadFileIntoDeck(trackURL, deckId);
+    }
 }

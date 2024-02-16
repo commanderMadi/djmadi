@@ -23,7 +23,6 @@ public:
     
     /** TO DO:  remove loadFile when refactoring */
     void loadFile(juce::File audioFile);
-    void loadURL(juce::URL audioURL);
     void setGain(double gain);
     void setSpeed(double ratio);
     void setPosition(double posInSecs);

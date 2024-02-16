@@ -37,15 +37,15 @@ public:
     /* Implement Button Listener */
     void buttonClicked(juce::Button *) override;
     void sliderValueChanged(juce::Slider *) override;
+    
+    void loadFileIntoDeck(const juce::String& trackURL, int deckId);
 
 private:
     juce::TextButton playButton;
     juce::TextButton stopButton;
-    juce::TextButton loadButton;
     juce::Slider gainSlider;
     juce::Slider speedSlider;
     juce::Slider posSlider;
-    juce::FileChooser fChooser{"Select a file..."};
     
     DJAudioPlayer* djAudioPlayer;
     WaveFormDisplay waveFormDisplay;

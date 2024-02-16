@@ -24,6 +24,9 @@ class MainComponent : public juce::AudioAppComponent {
     void paint(juce::Graphics &g) override;
     void resized() override;
     
+    // Load the file that is passed down from the playlist into the selected deck based on its id.
+    void loadFileIntoDeck(const juce::String& trackURL, int deckId);
+    
 
   private:
     //==============================================================================
