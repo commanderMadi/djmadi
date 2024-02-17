@@ -24,15 +24,18 @@ PlaylistComponent::PlaylistComponent()
 
 
     tableComponent.setModel(this);
-    
-    
+        
     addAndMakeVisible(tableComponent);
+    addAndMakeVisible(searchField);
+    searchField.addListener(this);
     
     formatManager.registerBasicFormats();
-    
+        
     playlistStorageFile = storageDirectory.getChildFile("playlist.json");
     
     playlistTracks = parseJsonFromFile(playlistStorageFile);
+    
+    filteredTracks = playlistTracks;
     
 
     DBG("The app just loaded. There are " << playlistTracks.size() << " tracks in the storage file.");
@@ -79,15 +82,22 @@ void PlaylistComponent::resized()
         trackTitles.push_back(title);
         trackDurations.push_back(duration);
     }
+    
+    double rowH = getHeight() / 5;
 
-    tableComponent.setBounds(0,0, getWidth(), getHeight() / 1.5);
+    tableComponent.setBounds(0, rowH, getWidth(), getHeight());
+    searchField.setBounds(0,rowH/16, getWidth(), rowH);
+    
+    searchField.setTextToShowWhenEmpty("Search for a track.....", juce::Colours::orange);
+    
     // Update the content after setting the bounds
     tableComponent.updateContent();
 }
 
 int PlaylistComponent::getNumRows() {
-    return static_cast<int>(trackTitles.size());
+    return static_cast<int>(filteredTracks.size());
 }
+
 void PlaylistComponent::paintRowBackground(juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) {
     if (rowIsSelected) {
         g.fillAll(juce::Colours::orange);
@@ -97,12 +107,11 @@ void PlaylistComponent::paintRowBackground(juce::Graphics& g, int rowNumber, int
 }
 void PlaylistComponent::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) {
     if (columnId == 1) {
-        g.drawText(trackTitles[rowNumber], 2, 0, width - 4, height, juce::Justification::centredLeft, true);
+        g.drawText(filteredTracks[rowNumber]["title"].toString(), 2, 0, width - 4, height, juce::Justification::centredLeft, true);
     }
     if (columnId == 2) {
-        g.drawText(trackDurations[rowNumber], 2, 0, width - 4, height, juce::Justification::centredLeft, true);
+        g.drawText(filteredTracks[rowNumber]["duration"].toString(), 2, 0, width - 4, height, juce::Justification::centredLeft, true);
     }
-   
 }
 
 juce::Component* PlaylistComponent::refreshComponentForCell(int rowNumber, int columnId, bool isRowSelected, Component* existingComponentToUpdate) {
@@ -143,7 +152,7 @@ void PlaylistComponent::buttonClicked(juce::Button *button) {
         if (loadIntoDeckCallback != nullptr) {
             int rowId = button->getComponentID().getIntValue();
             // Obtain the stored track URL and send it to the callback call
-            juce::String trackURL = playlistTracks[rowId].getProperty("fileURL", juce::var()).toString();
+            juce::String trackURL = filteredTracks[rowId].getProperty("fileURL", juce::var()).toString();
             loadIntoDeckCallback(trackURL, deckId);
         }
 }
@@ -254,5 +263,34 @@ void PlaylistComponent::writeJsonToFile(juce::File playlistStorageFile, juce::va
 void PlaylistComponent::setLoadIntoDeckCallback(LoadIntoDeckCallback callback) {
     loadIntoDeckCallback = callback;
 }
+
+void PlaylistComponent::textEditorTextChanged(juce::TextEditor& editor) {
+    searchInput = searchField.getText(); // Gets the text which the user has typed in the search bar
+    std::cout << searchInput << std::endl;
+    filteredTracks = juce::var();
+
+        // Filter tracks based on search input
+        for (int i = 0; i < playlistTracks.size(); ++i) {
+            juce::String trackTitleLowerCase = playlistTracks[i]["title"].toString().toLowerCase();
+            if (trackTitleLowerCase.containsIgnoreCase(searchInput)) {
+                filteredTracks.append(playlistTracks[i]);
+                std::cout << "Filtered tracks size: " << filteredTracks.size() << std::endl;
+                std::cout << playlistTracks[i]["title"].toString() << std::endl;
+
+            }
+        }
+    
+
+    // Update the table component after filtering
+    tableComponent.updateContent();
+
+    if (searchInput.isEmpty()) {
+        // If the search field is empty, show all tracks
+        filteredTracks = playlistTracks; // Assuming allTrackTitles holds all your tracks
+        std::cout << "I am called" << std::endl;
+        tableComponent.updateContent(); // Update the table again when searchInput is empty
+    }
+}
+
 
 

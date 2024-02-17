@@ -20,7 +20,11 @@
 //==============================================================================
 /*
 */
-class PlaylistComponent  : public juce::Component, public juce::TableListBoxModel, public juce::Button::Listener, public juce::FileDragAndDropTarget
+class PlaylistComponent  : public juce::Component, 
+                           public juce::TableListBoxModel, 
+                           public juce::Button::Listener,
+                           public juce::FileDragAndDropTarget,
+                           public juce::TextEditor::Listener
 
 {
 public:
@@ -41,6 +45,8 @@ public:
     bool isInterestedInFileDrag(const juce::StringArray &files) override;
     void filesDropped(const juce::StringArray &files, int x, int y) override;
     
+    void textEditorTextChanged(juce::TextEditor& editor) override;
+    
     // a callback function that will pass down the track URL and the deck ID from the playlist component down to the deck
     using LoadIntoDeckCallback = std::function<void(const juce::String&, int)>;
 
@@ -55,12 +61,14 @@ private:
     juce::AudioFormatManager formatManager;
     juce::File playlistStorageFile;
     juce::var playlistTracks;
+    juce::var filteredTracks;
     juce::TableListBox tableComponent;
     std::vector<juce::String>trackTitles;
     std::vector<juce::String>trackDurations;
     juce::TextButton addToPlaylistButton;
-    juce::FileChooser fChooser{"Select a file..."};
     LoadIntoDeckCallback loadIntoDeckCallback;
+    juce::TextEditor searchField;
+    juce::String searchInput;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlaylistComponent)
 };
