@@ -42,11 +42,13 @@ public:
     void filesDropped(const juce::StringArray &files, int x, int y) override;
     
     // a callback function that will pass down the track URL and the deck ID from the playlist component down to the deck
-     
     using LoadIntoDeckCallback = std::function<void(const juce::String&, int)>;
 
     // Setting up the callback function
     void setLoadIntoDeckCallback(LoadIntoDeckCallback callback);
+    
+    void writeJsonToFile(juce::File storageFile, juce::var playlist);
+    juce::var parseJsonFromFile(juce::File storageFile);
 
 private:
     juce::File storageDirectory{juce::File::getSpecialLocation(juce::File::SpecialLocationType::userDocumentsDirectory)};

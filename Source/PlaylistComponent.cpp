@@ -27,22 +27,14 @@ PlaylistComponent::PlaylistComponent()
     
     
     addAndMakeVisible(tableComponent);
-    addAndMakeVisible(addToPlaylistButton);
     
-    addToPlaylistButton.setButtonText("Add to Playlist");
-    addToPlaylistButton.addListener(this);
     formatManager.registerBasicFormats();
     
     playlistStorageFile = storageDirectory.getChildFile("playlist.json");
-
     
-    if (playlistStorageFile.existsAsFile()) {
-        juce::String content = playlistStorageFile.loadFileAsString();
-        juce::var result = juce::JSON::parse(content);
-        if (result.isArray()) {
-            playlistTracks = *result.getArray();
-        }
-    }
+    playlistTracks = parseJsonFromFile(playlistStorageFile);
+    
+
     DBG("The app just loaded. There are " << playlistTracks.size() << " tracks in the storage file.");
     repaint();
 }
@@ -89,8 +81,6 @@ void PlaylistComponent::resized()
     }
 
     tableComponent.setBounds(0,0, getWidth(), getHeight() / 1.5);
-    addToPlaylistButton.setBounds(getWidth() - 200, (getHeight() / 2) * 1.5, 200, 50);
-
     // Update the content after setting the bounds
     tableComponent.updateContent();
 }
@@ -144,8 +134,6 @@ juce::Component* PlaylistComponent::refreshComponentForCell(int rowNumber, int c
 }
 
 void PlaylistComponent::buttonClicked(juce::Button *button) {
-    if (button != &addToPlaylistButton) {
-//        int id = std::stoi(button->getComponentID().toStdString());
         int deckId = -1;
         if (button->getButtonText() == "Deck 1") {
             deckId = 1;
@@ -158,34 +146,12 @@ void PlaylistComponent::buttonClicked(juce::Button *button) {
             juce::String trackURL = playlistTracks[rowId].getProperty("fileURL", juce::var()).toString();
             loadIntoDeckCallback(trackURL, deckId);
         }
-        
-    }
-    if (button == &addToPlaylistButton) {
-
-        // - configure the dialogue
-        auto fileChooserFlags = juce::FileBrowserComponent::canSelectFiles;
-
-        // - launch out of the main thread
-        fChooser.launchAsync(fileChooserFlags, [this](const juce::FileChooser& chooser) {
-            auto chosenFile = chooser.getResult();
-            juce::String fileName = chosenFile.getFileName();
-
-            // Use MessageManager to execute this code on the message thread
-            juce::MessageManager::callAsync([this, fileName]() {
-                // Update the UI components on the message thread
-                trackTitles.push_back(fileName);
-                tableComponent.updateContent();
-
-            });
-        });
-    }
 }
+
 bool PlaylistComponent::isInterestedInFileDrag(const juce::StringArray &files) {
-    std::cout << "DeckGUI::isInterestedInFileDrag" << std::endl;
     return true;
 }
 void PlaylistComponent::filesDropped(const juce::StringArray &files, int x, int y) {
-    std::cout << "DeckGUI::filesDropped" << std::endl;
     
     if (files.size() == 1) {
         auto fileURLJuce = files[0];
@@ -223,42 +189,26 @@ void PlaylistComponent::filesDropped(const juce::StringArray &files, int x, int 
         trackObject->setProperty("fileURL", fileURLJuce);
         trackObject->setProperty("title", stringifiedTrackTitle);
         trackObject->setProperty("duration", stringifiedTrackDuration);
-
         juce::var trackObjectVar(trackObject);
-        // This will hold an instance of the playlist updated with the newly added track
-        juce::Array<juce::var> updatedPlaylist;
         
-        /** If the playlist json file already exists and has at least 1 song stored, store a copy of it in the updatedPlaylist */
-        if (playlistStorageFile.existsAsFile() && playlistStorageFile.getSize() > 0) {
-            juce::String content = playlistStorageFile.loadFileAsString();
-            playlistTracks = juce::JSON::parse(content);
-            if (playlistTracks.isArray()) {
-                updatedPlaylist = *playlistTracks.getArray();
-            }
+        juce::var existingPlaylist = parseJsonFromFile(playlistStorageFile);
+        juce::Array<juce::var>* updatedPlaylist = nullptr;
+        
+        if (existingPlaylist.isArray()) {
+            updatedPlaylist = existingPlaylist.getArray();
+        } else {
+            existingPlaylist = juce::Array<juce::var>();
+            updatedPlaylist = existingPlaylist.getArray();
         }
         
         // add the new track to the playlist array
-        updatedPlaylist.add(trackObjectVar);
-        
-        // Get the JSON file
-        playlistStorageFile = storageDirectory.getChildFile("playlist.json");
+        updatedPlaylist->add(trackObjectVar);
         
         // Open an output stream
-        std::unique_ptr<juce::FileOutputStream> output(playlistStorageFile.createOutputStream());
-        
-        /** If the file opens normally, overwrite it by setting its position to 0 and truncating it (this is from the docs)*/
-        if (output->openedOk()) {
-            output->setPosition(0);
-            output->truncate();
-            // Write the updated JSON content to the file
-            juce::JSON::writeToStream(*output, updatedPlaylist);
-        } else {
-            // On save error
-            std::cerr << "Failed to open the output file for writing!" << std::endl;
-        }
+        writeJsonToFile(playlistStorageFile, *updatedPlaylist);
         
         // Now, make the playlistTracks instance variable store a copy of the updatedPlaylist
-        playlistTracks = updatedPlaylist;
+        playlistTracks = *updatedPlaylist;
         // Close the reader after reading the file
         delete reader;
 
@@ -266,18 +216,43 @@ void PlaylistComponent::filesDropped(const juce::StringArray &files, int x, int 
         trackDurations.push_back(stringifiedTrackDuration);
         tableComponent.updateContent();
     }
-
 }
+
+juce::var PlaylistComponent::parseJsonFromFile(juce::File storageFile) {
+    juce::var result;
+    juce::var playlist;
+    /** If the playlist json file already exists and has at least 1 song stored, store a copy of it in the updatedPlaylist */
+    if (storageFile.existsAsFile() && storageFile.getSize() > 0) {
+        juce::String content = storageFile.loadFileAsString();
+        result = juce::JSON::parse(content);
+        if (result.isArray()) {
+            playlist = *result.getArray();
+            return playlist;
+        }
+    }
+    return playlist;
+}
+
+void PlaylistComponent::writeJsonToFile(juce::File playlistStorageFile, juce::var playlist) {
+    
+    std::unique_ptr<juce::FileOutputStream> output(playlistStorageFile.createOutputStream());
+    playlistStorageFile = storageDirectory.getChildFile("playlist.json");
+    
+    /** If the file opens normally, overwrite it by setting its position to 0 and truncating it (this is from the docs)*/
+    if (output->openedOk()) {
+        output->setPosition(0);
+        output->truncate();
+        // Write the updated JSON content to the file
+        juce::JSON::writeToStream(*output, playlist);
+    } else {
+        // On save error
+        std::cerr << "Failed to open the output file for writing!" << std::endl;
+    }
+}
+
 
 void PlaylistComponent::setLoadIntoDeckCallback(LoadIntoDeckCallback callback) {
     loadIntoDeckCallback = callback;
 }
 
 
-//void PlaylistComponent::setLoadIntoDeckCallback(LoadIntoDeckCallback callback, DeckGUI* deckGUI) {
-//    loadIntoDeckCallback = [callback, deckGUI](const juce::String& fileURL, int deckId) {
-//        if (callback) {
-//            callback(fileURL, deckId, deckGUI);
-//        }
-//    };
-//}
