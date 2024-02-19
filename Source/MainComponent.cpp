@@ -56,9 +56,9 @@ void MainComponent::releaseResources() {
 
 
 void MainComponent::resized() {
-    deck1.setBounds(0, 0, getWidth() / 2, getHeight() * 3 / 4);
-    deck2.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight() * 3 / 4);
-    playlist.setBounds(0, getHeight() * 3 / 4, getWidth(), getHeight() / 4);
+    deck1.setBounds(0, 0, getWidth() / 2, getHeight() * 2 / 3);
+    deck2.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight() * 2 / 3);
+    playlist.setBounds(0, getHeight() * 2 / 3, getWidth(), getHeight() / 3);
 }
 
 void MainComponent::paint(juce::Graphics &g)

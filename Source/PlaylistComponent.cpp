@@ -61,7 +61,7 @@ void PlaylistComponent::paint (juce::Graphics& g)
     g.drawRect (getLocalBounds(), 2);   // draw an outline around the component
 
     g.setColour (juce::Colours::orange);
-    g.setFont (34.0f);
+    g.setFont (20.0f);
     g.drawText ("PlaylistComponent", getLocalBounds(),
                 juce::Justification::centred, true);   // draw some placeholder text
 }
