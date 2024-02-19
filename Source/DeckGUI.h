@@ -24,7 +24,7 @@ class DeckGUI : public juce::Component,
 {
     
 public:
-    DeckGUI(DJAudioPlayer* _djAudioPlayer, juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse);
+    DeckGUI(juce::Colour &colorToUse, DJAudioPlayer* _djAudioPlayer, juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse);
     ~DeckGUI() override;
 
     // Component virtual pure funcs

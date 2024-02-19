@@ -12,7 +12,7 @@
 #include "DeckGUI.h"
 
 //==============================================================================
-DeckGUI::DeckGUI(DJAudioPlayer* _djAudioPlayer, juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse) : djAudioPlayer(_djAudioPlayer), waveFormDisplay(formatManagerToUse, cacheToUse) {
+DeckGUI::DeckGUI(juce::Colour &colorToUse, DJAudioPlayer* _djAudioPlayer, juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse) : djAudioPlayer(_djAudioPlayer), waveFormDisplay(colorToUse, formatManagerToUse, cacheToUse) {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
     addAndMakeVisible(playButton);
@@ -24,7 +24,6 @@ DeckGUI::DeckGUI(DJAudioPlayer* _djAudioPlayer, juce::AudioFormatManager &format
     
     addAndMakeVisible(waveFormDisplay);
 
-    
     playButton.setButtonText("Play");
     stopButton.setButtonText("Stop");
     
@@ -76,19 +75,22 @@ void DeckGUI::sliderValueChanged(juce::Slider* slider) {
 }
 void DeckGUI::paint (juce::Graphics& g)
 {
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+
+    g.fillAll (juce::Colour(42, 46, 51));
+
 }
 
 void DeckGUI::resized() {
     // This method is where you should set the bounds of any child
     // components that your component contains..
-    float rowH = getWidth() / 8;
-    playButton.setBounds(0, 0, getWidth(), rowH);
-    stopButton.setBounds(0, rowH, getWidth(), rowH);
-    gainSlider.setBounds(0, rowH*2, getWidth(), rowH);
-    posSlider.setBounds(0, rowH*3, getWidth(), rowH);
-    speedSlider.setBounds(0, rowH*4, getWidth(), rowH);
-    waveFormDisplay.setBounds(0, rowH*5, getWidth(), rowH*2);
+//    float rowW = getWidth() / 4;
+    float rowH = getHeight() / 4;
+    waveFormDisplay.setBounds(0, 0, getWidth(), rowH);
+//    playButton.setBounds(0, 0, getWidth(), rowH);
+//    stopButton.setBounds(0, rowH, getWidth(), rowH);
+//    gainSlider.setBounds(0, rowH*2, getWidth(), rowH);
+//    posSlider.setBounds(0, rowH*3, getWidth(), rowH);
+//    speedSlider.setBounds(0, rowH*4, getWidth(), rowH);
 }
 
 

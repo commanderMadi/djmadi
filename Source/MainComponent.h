@@ -33,8 +33,11 @@ class MainComponent : public juce::AudioAppComponent {
     // Your private member variables go here...
     DJAudioPlayer player1{formatManager};
     DJAudioPlayer player2{formatManager};
-    DeckGUI deck1{&player1, formatManager, thumbCache};
-    DeckGUI deck2{&player2, formatManager, thumbCache};
+    juce::Colour colorLeft = juce::Colour(247, 119, 24);
+    juce::Colour colorRight = juce::Colour(4, 167, 223);
+
+    DeckGUI deck1{colorLeft, &player1, formatManager, thumbCache};
+    DeckGUI deck2{colorRight, &player2, formatManager, thumbCache};
     PlaylistComponent playlist;
     
     juce::MixerAudioSource mixerSource;

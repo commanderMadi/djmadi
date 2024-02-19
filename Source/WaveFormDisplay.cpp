@@ -12,7 +12,7 @@
 #include "WaveFormDisplay.h"
 
 //==============================================================================
-WaveFormDisplay::WaveFormDisplay(juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse) : audioThumb(1000, formatManagerToUse, cacheToUse), fileLoaded(false), position(0)
+WaveFormDisplay::WaveFormDisplay(juce::Colour &colorToUse, juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse) : colorToUse(colorToUse), audioThumb(1000, formatManagerToUse, cacheToUse), fileLoaded(false), position(0)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -32,17 +32,16 @@ void WaveFormDisplay::paint (juce::Graphics& g)
        You should replace everything in this method with your own
        drawing code..
     */
-
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
-
+    g.fillAll (juce::Colour(42, 46, 51));
     g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    
+    g.drawRect (getLocalBounds(), 1.5);   // draw an outline around the component
 
-    g.setColour (juce::Colours::orange);
+    g.setColour (colorToUse);
     
     if (fileLoaded) {
         audioThumb.drawChannel(g, getLocalBounds(),0,audioThumb.getTotalLength(),0,1);
-        g.setColour(juce::Colours::lightblue);
+        g.setColour(colorToUse);
         g.drawRect(position * getWidth(), 0, getWidth() / 20, getHeight());
     } else {
         g.setFont (20.0f);
