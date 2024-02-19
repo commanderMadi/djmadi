@@ -160,72 +160,129 @@ void PlaylistComponent::buttonClicked(juce::Button *button) {
 bool PlaylistComponent::isInterestedInFileDrag(const juce::StringArray &files) {
     return true;
 }
-void PlaylistComponent::filesDropped(const juce::StringArray &files, int x, int y) {
-    
-    if (files.size() == 1) {
+//void PlaylistComponent::filesDropped(const juce::StringArray &files, int x, int y) {
+//    
+//    if (files.size() == 1) {
+//        auto fileURLJuce = files[0];
+//        std::string fileURL = fileURLJuce.toStdString();
+//        // Extract the track name from the URL
+//        size_t sepPos = fileURL.find_last_of("/\\");
+//        // Store the track title
+//        std::string trackTitle;
+//     
+//        // Create a new UUID to uniquely identify each song in the JSON storage file
+//            juce::Uuid newUuid;
+//
+//            // Convert the UUID to a string and save it in a variable
+//            juce::String trackId = newUuid.toString();
+//
+//        
+//        if (sepPos != std::string::npos) {
+//            // Extract everything after the last path separator
+//            trackTitle = fileURL.substr(sepPos + 1);
+//        } else {
+//            // No path separator found, the filePath is the fileName
+//            trackTitle = fileURL;
+//        }
+//    
+//        // Read the input audio file and obtain the length in seconds
+//        juce::AudioFormatReader* reader = formatManager.createReaderFor(fileURLJuce);
+//        auto trackDuration = reader->lengthInSamples / reader->sampleRate;
+//        // Convert the number of seconds to a juce String object
+//        juce::String stringifiedTrackDuration = juce::String::formatted("%.2f", trackDuration);
+//        juce::String stringifiedTrackTitle = juce::String(trackTitle.c_str());
+//        
+//        // Create the song dynamic object, this will be stored and written to the JSON playlist file.
+//        juce::DynamicObject* trackObject = new juce::DynamicObject();
+//        trackObject->setProperty("id", trackId);
+//        trackObject->setProperty("fileURL", fileURLJuce);
+//        trackObject->setProperty("title", stringifiedTrackTitle);
+//        trackObject->setProperty("duration", stringifiedTrackDuration);
+//        juce::var trackObjectVar(trackObject);
+//        
+//        juce::var existingPlaylist = parseJsonFromFile(playlistStorageFile);
+//        juce::Array<juce::var>* updatedPlaylist = nullptr;
+//        
+//        if (existingPlaylist.isArray()) {
+//            updatedPlaylist = existingPlaylist.getArray();
+//        } else {
+//            existingPlaylist = juce::Array<juce::var>();
+//            updatedPlaylist = existingPlaylist.getArray();
+//        }
+//        
+//        // add the new track to the playlist array
+//        updatedPlaylist->add(trackObjectVar);
+//        
+//        // Open an output stream
+//        writeJsonToFile(playlistStorageFile, *updatedPlaylist);
+//        
+//        // Now, make the playlistTracks instance variable store a copy of the updatedPlaylist
+//        playlistTracks = *updatedPlaylist;
+//        // Close the reader after reading the file
+//        delete reader;
+//
+//        trackTitles.push_back(trackTitle);
+//        trackDurations.push_back(stringifiedTrackDuration);
+//        tableComponent.updateContent();
+//    }
+//}
+
+void PlaylistComponent::filesDropped(const juce::StringArray& files, int x, int y)
+{
+    if (files.size() == 1)
+    {
         auto fileURLJuce = files[0];
         std::string fileURL = fileURLJuce.toStdString();
+
         // Extract the track name from the URL
         size_t sepPos = fileURL.find_last_of("/\\");
-        // Store the track title
         std::string trackTitle;
-     
+
         // Create a new UUID to uniquely identify each song in the JSON storage file
-            juce::Uuid newUuid;
+        juce::Uuid newUuid;
+        juce::String trackId = newUuid.toString();
 
-            // Convert the UUID to a string and save it in a variable
-            juce::String trackId = newUuid.toString();
-
-        
-        if (sepPos != std::string::npos) {
-            // Extract everything after the last path separator
+        if (sepPos != std::string::npos)
+        {
             trackTitle = fileURL.substr(sepPos + 1);
-        } else {
-            // No path separator found, the filePath is the fileName
+        }
+        else
+        {
             trackTitle = fileURL;
         }
-    
+
         // Read the input audio file and obtain the length in seconds
         juce::AudioFormatReader* reader = formatManager.createReaderFor(fileURLJuce);
         auto trackDuration = reader->lengthInSamples / reader->sampleRate;
-        // Convert the number of seconds to a juce String object
         juce::String stringifiedTrackDuration = juce::String::formatted("%.2f", trackDuration);
         juce::String stringifiedTrackTitle = juce::String(trackTitle.c_str());
-        
-        // Create the song dynamic object, this will be stored and written to the JSON playlist file.
+
+        // Create the song dynamic object
         juce::DynamicObject* trackObject = new juce::DynamicObject();
         trackObject->setProperty("id", trackId);
         trackObject->setProperty("fileURL", fileURLJuce);
         trackObject->setProperty("title", stringifiedTrackTitle);
         trackObject->setProperty("duration", stringifiedTrackDuration);
         juce::var trackObjectVar(trackObject);
-        
-        juce::var existingPlaylist = parseJsonFromFile(playlistStorageFile);
-        juce::Array<juce::var>* updatedPlaylist = nullptr;
-        
-        if (existingPlaylist.isArray()) {
-            updatedPlaylist = existingPlaylist.getArray();
-        } else {
-            existingPlaylist = juce::Array<juce::var>();
-            updatedPlaylist = existingPlaylist.getArray();
-        }
-        
-        // add the new track to the playlist array
-        updatedPlaylist->add(trackObjectVar);
-        
+
+        // Add the new track to the playlist array
+        playlistTracks.append(trackObjectVar);
+
         // Open an output stream
-        writeJsonToFile(playlistStorageFile, *updatedPlaylist);
-        
-        // Now, make the playlistTracks instance variable store a copy of the updatedPlaylist
-        playlistTracks = *updatedPlaylist;
+        writeJsonToFile(playlistStorageFile, playlistTracks);
+
         // Close the reader after reading the file
         delete reader;
 
-        trackTitles.push_back(trackTitle);
+        // Update trackTitles and trackDurations (if needed)
+        trackTitles.push_back(stringifiedTrackTitle);
         trackDurations.push_back(stringifiedTrackDuration);
+
+        // Update the table component after adding a new track
         tableComponent.updateContent();
     }
 }
+
 
 juce::var PlaylistComponent::parseJsonFromFile(juce::File storageFile) {
     juce::var result;
