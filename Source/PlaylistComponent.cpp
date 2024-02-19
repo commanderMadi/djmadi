@@ -272,7 +272,7 @@ void PlaylistComponent::textEditorTextChanged(juce::TextEditor& editor) {
         // Filter tracks based on search input
         for (int i = 0; i < playlistTracks.size(); ++i) {
             juce::String trackTitleLowerCase = playlistTracks[i]["title"].toString().toLowerCase();
-            if (trackTitleLowerCase.containsIgnoreCase(searchInput)) {
+            if (trackTitleLowerCase.containsIgnoreCase(searchInput.trim())) {
                 filteredTracks.append(playlistTracks[i]);
                 std::cout << "Filtered tracks size: " << filteredTracks.size() << std::endl;
                 std::cout << playlistTracks[i]["title"].toString() << std::endl;
@@ -286,9 +286,10 @@ void PlaylistComponent::textEditorTextChanged(juce::TextEditor& editor) {
 
     if (searchInput.isEmpty()) {
         // If the search field is empty, show all tracks
-        filteredTracks = playlistTracks; // Assuming allTrackTitles holds all your tracks
-        std::cout << "I am called" << std::endl;
-        tableComponent.updateContent(); // Update the table again when searchInput is empty
+        filteredTracks = playlistTracks;
+        
+        // Re-populate the table again when searchInput is empty
+        tableComponent.updateContent();
     }
 }
 
