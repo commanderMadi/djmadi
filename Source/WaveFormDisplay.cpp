@@ -12,7 +12,7 @@
 #include "WaveFormDisplay.h"
 
 //==============================================================================
-WaveFormDisplay::WaveFormDisplay(juce::Colour &colorToUse, juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse) : colorToUse(colorToUse), audioThumb(1000, formatManagerToUse, cacheToUse), fileLoaded(false), position(0)
+WaveFormDisplay::WaveFormDisplay(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage, juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse) : colorToUse(colorToUse), waveFormDefaultMessage(waveFormDefaultMessage), audioThumb(1000, formatManagerToUse, cacheToUse), fileLoaded(false), position(0)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -44,8 +44,8 @@ void WaveFormDisplay::paint (juce::Graphics& g)
         g.setColour(colorToUse);
         g.drawRect(position * getWidth(), 0, getWidth() / 20, getHeight());
     } else {
-        g.setFont (20.0f);
-        g.drawText ("File Not Loaded yet...", getLocalBounds(),
+        g.setFont (14.0f);
+        g.drawText (waveFormDefaultMessage, getLocalBounds(),
                     juce::Justification::centred, true);   // draw some placeholder text
     }
 

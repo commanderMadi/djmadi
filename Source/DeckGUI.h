@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include "DJAudioPlayer.h"
 #include "WaveFormDisplay.h"
+#include "CustomDesign.h"
 //==============================================================================
 /*
 */
@@ -24,7 +25,7 @@ class DeckGUI : public juce::Component,
 {
     
 public:
-    DeckGUI(juce::Colour &colorToUse, DJAudioPlayer* _djAudioPlayer, juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse);
+    DeckGUI(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage, DJAudioPlayer* _djAudioPlayer, juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse);
     ~DeckGUI() override;
 
     // Component virtual pure funcs
@@ -46,7 +47,11 @@ private:
     juce::Slider gainSlider;
     juce::Slider speedSlider;
     juce::Slider posSlider;
-    
+
+    std::unique_ptr<CustomDesign> customPlayButtonColor;
+    std::unique_ptr<CustomDesign> customStopButtonColor;
+    std::unique_ptr<CustomDesign> customSliderBackgroundColor;
+
     DJAudioPlayer* djAudioPlayer;
     WaveFormDisplay waveFormDisplay;
     

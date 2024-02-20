@@ -35,9 +35,11 @@ class MainComponent : public juce::AudioAppComponent {
     DJAudioPlayer player2{formatManager};
     juce::Colour colorLeft = juce::Colour(247, 119, 24);
     juce::Colour colorRight = juce::Colour(4, 167, 223);
+    juce::String waveFormMessageLeft = "Waiting to load into deck 1";
+    juce::String waveFormMessageRight = "Waiting to load into deck 2";
 
-    DeckGUI deck1{colorLeft, &player1, formatManager, thumbCache};
-    DeckGUI deck2{colorRight, &player2, formatManager, thumbCache};
+    DeckGUI deck1{colorLeft, waveFormMessageLeft, &player1, formatManager, thumbCache};
+    DeckGUI deck2{colorRight,waveFormMessageRight, &player2, formatManager, thumbCache};
     PlaylistComponent playlist;
     
     juce::MixerAudioSource mixerSource;
