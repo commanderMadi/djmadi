@@ -29,6 +29,9 @@ PlaylistComponent::PlaylistComponent()
     addAndMakeVisible(searchField);
     searchField.addListener(this);
     
+    searchField.setColour(juce::TextEditor::ColourIds::backgroundColourId, juce::Colour(42, 46, 51));
+    tableComponent.setColour(juce::TableListBox::ColourIds::backgroundColourId, juce::Colour(42, 46, 51));
+    
     formatManager.registerBasicFormats();
         
     playlistStorageFile = storageDirectory.getChildFile("playlist.json");
@@ -55,14 +58,14 @@ void PlaylistComponent::paint (juce::Graphics& g)
        drawing code..
     */
 
-    g.fillAll (juce::Colour(42, 46, 151));
+    g.fillAll (juce::Colours::whitesmoke);
 
     g.setColour (juce::Colours::grey);
     g.drawRect (getLocalBounds(), 2);   // draw an outline around the component
 
     g.setColour (juce::Colours::orange);
     g.setFont (20.0f);
-    g.drawText ("PlaylistComponent", getLocalBounds(),
+    g.drawText ("Drag Files into in this area to store them to the library", getLocalBounds(),
                 juce::Justification::centred, true);   // draw some placeholder text
 }
 
@@ -78,18 +81,13 @@ void PlaylistComponent::resized()
         trackTitles.push_back(title);
         trackDurations.push_back(duration);
     }
-    
-    tableComponent.setBounds(0,0, getWidth(), getHeight());
+    searchField.setBounds(0,0, getWidth(), getHeight() / 5);
+    searchField.setFont(20.0f);
+    searchField.setTextToShowWhenEmpty("Search for a track.....", juce::Colours::lightblue);
 
-    
-//    double rowH = getHeight() / 5;
-//
-//    tableComponent.setBounds(0, rowH, getWidth(), getHeight());
-//    searchField.setBounds(0,rowH/16, getWidth(), rowH);
-//    
-//    searchField.setTextToShowWhenEmpty("Search for a track.....", juce::Colours::orange);
-//    
-    // Update the content after setting the bounds
+    double searchFieldPos = searchField.getHeight();
+    tableComponent.setBounds(0,searchFieldPos, getWidth(), getHeight());
+
     tableComponent.updateContent();
 }
 
@@ -99,7 +97,7 @@ int PlaylistComponent::getNumRows() {
 
 void PlaylistComponent::paintRowBackground(juce::Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) {
     if (rowIsSelected) {
-        g.fillAll(juce::Colours::orange);
+        g.fillAll(juce::Colours::lightcyan);
     } else {
         g.fillAll (juce::Colour(42, 46, 51));
         g.setColour(juce::Colours::snow);
@@ -121,8 +119,10 @@ juce::Component* PlaylistComponent::refreshComponentForCell(int rowNumber, int c
             juce::TextButton* btn = new juce::TextButton("Deck 1");
             juce::String id{std::to_string(rowNumber)};
             
+            btn->setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colour(247, 119, 24));
             btn->addListener(this);
             btn->setComponentID(id);
+            
             existingComponentToUpdate = btn;
         }
     }
@@ -133,8 +133,10 @@ juce::Component* PlaylistComponent::refreshComponentForCell(int rowNumber, int c
             juce::TextButton* btn = new juce::TextButton("Deck 2");
             juce::String id{std::to_string(rowNumber)};
             
+            btn->setColour(juce::TextButton::ColourIds::buttonColourId,  juce::Colour(4, 167, 223));
             btn->addListener(this);
             btn->setComponentID(id);
+            
             existingComponentToUpdate = btn;
 
         }
@@ -160,72 +162,6 @@ void PlaylistComponent::buttonClicked(juce::Button *button) {
 bool PlaylistComponent::isInterestedInFileDrag(const juce::StringArray &files) {
     return true;
 }
-//void PlaylistComponent::filesDropped(const juce::StringArray &files, int x, int y) {
-//    
-//    if (files.size() == 1) {
-//        auto fileURLJuce = files[0];
-//        std::string fileURL = fileURLJuce.toStdString();
-//        // Extract the track name from the URL
-//        size_t sepPos = fileURL.find_last_of("/\\");
-//        // Store the track title
-//        std::string trackTitle;
-//     
-//        // Create a new UUID to uniquely identify each song in the JSON storage file
-//            juce::Uuid newUuid;
-//
-//            // Convert the UUID to a string and save it in a variable
-//            juce::String trackId = newUuid.toString();
-//
-//        
-//        if (sepPos != std::string::npos) {
-//            // Extract everything after the last path separator
-//            trackTitle = fileURL.substr(sepPos + 1);
-//        } else {
-//            // No path separator found, the filePath is the fileName
-//            trackTitle = fileURL;
-//        }
-//    
-//        // Read the input audio file and obtain the length in seconds
-//        juce::AudioFormatReader* reader = formatManager.createReaderFor(fileURLJuce);
-//        auto trackDuration = reader->lengthInSamples / reader->sampleRate;
-//        // Convert the number of seconds to a juce String object
-//        juce::String stringifiedTrackDuration = juce::String::formatted("%.2f", trackDuration);
-//        juce::String stringifiedTrackTitle = juce::String(trackTitle.c_str());
-//        
-//        // Create the song dynamic object, this will be stored and written to the JSON playlist file.
-//        juce::DynamicObject* trackObject = new juce::DynamicObject();
-//        trackObject->setProperty("id", trackId);
-//        trackObject->setProperty("fileURL", fileURLJuce);
-//        trackObject->setProperty("title", stringifiedTrackTitle);
-//        trackObject->setProperty("duration", stringifiedTrackDuration);
-//        juce::var trackObjectVar(trackObject);
-//        
-//        juce::var existingPlaylist = parseJsonFromFile(playlistStorageFile);
-//        juce::Array<juce::var>* updatedPlaylist = nullptr;
-//        
-//        if (existingPlaylist.isArray()) {
-//            updatedPlaylist = existingPlaylist.getArray();
-//        } else {
-//            existingPlaylist = juce::Array<juce::var>();
-//            updatedPlaylist = existingPlaylist.getArray();
-//        }
-//        
-//        // add the new track to the playlist array
-//        updatedPlaylist->add(trackObjectVar);
-//        
-//        // Open an output stream
-//        writeJsonToFile(playlistStorageFile, *updatedPlaylist);
-//        
-//        // Now, make the playlistTracks instance variable store a copy of the updatedPlaylist
-//        playlistTracks = *updatedPlaylist;
-//        // Close the reader after reading the file
-//        delete reader;
-//
-//        trackTitles.push_back(trackTitle);
-//        trackDurations.push_back(stringifiedTrackDuration);
-//        tableComponent.updateContent();
-//    }
-//}
 
 void PlaylistComponent::filesDropped(const juce::StringArray& files, int x, int y)
 {

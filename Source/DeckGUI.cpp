@@ -38,9 +38,11 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage,
     posSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     posSlider.setLookAndFeel(customSliderBackgroundColor.get());
 
-
-    
     addAndMakeVisible(waveFormDisplay);
+    
+    addAndMakeVisible(nowPlayingLabel);
+    nowPlayingLabel.setText("Now Playing: ", juce::dontSendNotification);
+    nowPlayingLabel.setJustificationType(juce::Justification::centredLeft);
 
     playButton.setButtonText("Play");
     playButton.setLookAndFeel(customPlayButtonColor.get());
@@ -134,21 +136,23 @@ void DeckGUI::resized() {
 
     // Set bounds and style for gainSlider
     gainSlider.setBounds(sliderXPosition, waveFormHeight + yPadding, sliderSize, sliderSize);
-//    gainSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-//    gainSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 
     // Set bounds and style for speedSlider
     speedSlider.setBounds(sliderXPosition + sliderSize + xPadding, waveFormHeight + yPadding, sliderSize, sliderSize);
-//    speedSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-//    speedSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 
     // Set bounds and style for posSlider
     posSlider.setBounds(sliderXPosition + 2 * (sliderSize + xPadding), waveFormHeight + yPadding, sliderSize, sliderSize);
-//    posSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-//    posSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-    
+
     playButton.setBounds(playXPosition, playYPosition, buttonWidth, buttonHeight);
     stopButton.setBounds(stopXPosition, stopYPosition, buttonWidth, buttonHeight);
+    
+//    nowPlayingLabel.setBounds(10, getHeight() - 30, getWidth() - 20, 20); // Adjust bounds as needed
+    int labelWidth = getWidth() - 20; // Adjust the width as necessary
+    int labelHeight = 20; // Adjust the height as necessary
+    int labelYPosition = rowH + yPadding - labelHeight - 50; // Adjust the vertical offset as necessary
+    
+    nowPlayingLabel.setBounds((getWidth() - labelWidth) / 2, labelYPosition, labelWidth, labelHeight);
+    
 
 }
 
@@ -174,5 +178,10 @@ void DeckGUI::loadFileIntoDeck(const juce::String& trackURL, int deckId) {
         waveFormDisplay.loadFile(file);
         std::cout << "Loading into Deck 2: " << trackURL << std::endl;
     }
-    // Add more conditions if you have additional decks
+    juce::String trackTitle = file.getFileNameWithoutExtension();
+        updateNowPlayingLabel(trackTitle);
 }
+
+void DeckGUI::updateNowPlayingLabel(const juce::String& trackTitle) {
+    nowPlayingLabel.setText("Now Playing: " + trackTitle, juce::dontSendNotification);
+};

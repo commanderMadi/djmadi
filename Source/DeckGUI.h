@@ -40,6 +40,8 @@ public:
     void sliderValueChanged(juce::Slider *) override;
     
     void loadFileIntoDeck(const juce::String& trackURL, int deckId);
+    void updateNowPlayingLabel(const juce::String& trackTitle);
+
 
 private:
     juce::TextButton playButton;
@@ -47,6 +49,7 @@ private:
     juce::Slider gainSlider;
     juce::Slider speedSlider;
     juce::Slider posSlider;
+    juce::Label nowPlayingLabel;
 
     std::unique_ptr<CustomDesign> customPlayButtonColor;
     std::unique_ptr<CustomDesign> customStopButtonColor;

@@ -65,7 +65,7 @@ void MainComponent::paint(juce::Graphics &g)
 {
     // Your drawing code goes here
     // For example, fill the background with a color:
-    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+    g.fillAll (juce::Colour(42, 46, 51));
     // Add any other drawing instructions here
 }
 
