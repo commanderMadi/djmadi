@@ -12,21 +12,42 @@
 #include "DeckGUI.h"
 
 //==============================================================================
-DeckGUI::DeckGUI(DJAudioPlayer* _djAudioPlayer, juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse) : djAudioPlayer(_djAudioPlayer), waveFormDisplay(formatManagerToUse, cacheToUse) {
+DeckGUI::DeckGUI(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage, DJAudioPlayer* _djAudioPlayer, juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse) : djAudioPlayer(_djAudioPlayer), waveFormDisplay(colorToUse, waveFormDefaultMessage, formatManagerToUse, cacheToUse) {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
+    
+    customPlayButtonColor = std::make_unique<CustomDesign>(juce::Colour(27, 195, 125));
+    customStopButtonColor = std::make_unique<CustomDesign>(juce::Colour(234, 21, 34));
+    customSliderBackgroundColor = std::make_unique<CustomDesign>(juce::Colour(184, 224, 242));
     addAndMakeVisible(playButton);
     addAndMakeVisible(stopButton);
 
     addAndMakeVisible(gainSlider);
     addAndMakeVisible(speedSlider);
     addAndMakeVisible(posSlider);
+
+    gainSlider.setSliderStyle(juce::Slider::Rotary);
+    gainSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    gainSlider.setLookAndFeel(customSliderBackgroundColor.get());
+
+    speedSlider.setSliderStyle(juce::Slider::Rotary);
+    speedSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    speedSlider.setLookAndFeel(customSliderBackgroundColor.get());
+
+    posSlider.setSliderStyle(juce::Slider::Rotary);
+    posSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    posSlider.setLookAndFeel(customSliderBackgroundColor.get());
+
+
     
     addAndMakeVisible(waveFormDisplay);
 
-    
     playButton.setButtonText("Play");
+    playButton.setLookAndFeel(customPlayButtonColor.get());
+    
     stopButton.setButtonText("Stop");
+    stopButton.setLookAndFeel(customStopButtonColor.get());
+
     
     playButton.addListener(this);
     stopButton.addListener(this);
@@ -45,6 +66,11 @@ DeckGUI::DeckGUI(DJAudioPlayer* _djAudioPlayer, juce::AudioFormatManager &format
 
 DeckGUI::~DeckGUI() {
     stopTimer();
+    playButton.setLookAndFeel(nullptr);
+    stopButton.setLookAndFeel(nullptr);
+    gainSlider.setLookAndFeel(nullptr);
+    speedSlider.setLookAndFeel(nullptr);
+    posSlider.setLookAndFeel(nullptr);
 }
 
 void DeckGUI::buttonClicked(juce::Button* button) {
@@ -76,19 +102,54 @@ void DeckGUI::sliderValueChanged(juce::Slider* slider) {
 }
 void DeckGUI::paint (juce::Graphics& g)
 {
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+
+    g.fillAll (juce::Colour(42, 46, 51));
+    
+    // Boundaries
+    g.setColour (juce::Colours::grey);
+    g.drawRect (getLocalBounds(), 1.5);
+
 }
 
 void DeckGUI::resized() {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-    float rowH = getWidth() / 8;
-    playButton.setBounds(0, 0, getWidth(), rowH);
-    stopButton.setBounds(0, rowH, getWidth(), rowH);
-    gainSlider.setBounds(0, rowH*2, getWidth(), rowH);
-    posSlider.setBounds(0, rowH*3, getWidth(), rowH);
-    speedSlider.setBounds(0, rowH*4, getWidth(), rowH);
-    waveFormDisplay.setBounds(0, rowH*5, getWidth(), rowH*2);
+
+    float rowH = getHeight() / 4;
+    int buttonWidth = 100;
+    int buttonHeight = 50;
+    int sliderSize = 100;
+    int xPadding = 10;
+    int yPadding = 100;
+
+
+    int playXPosition = (getWidth() - buttonWidth) / 2;
+    int playYPosition = (getHeight() - buttonHeight) * 3 / 4;
+    
+    int stopXPosition = (getWidth() - buttonWidth) / 2;
+    int stopYPosition = (getHeight() - buttonHeight) * 3 / 4 + 75;
+    
+    int sliderXPosition = (getWidth() - sliderSize * 3 - xPadding * 2) / 2; // Adjust padding and position
+
+    waveFormDisplay.setBounds(0, 0, getWidth(), rowH);
+    int waveFormHeight = waveFormDisplay.getHeight();
+
+    // Set bounds and style for gainSlider
+    gainSlider.setBounds(sliderXPosition, waveFormHeight + yPadding, sliderSize, sliderSize);
+//    gainSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+//    gainSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+
+    // Set bounds and style for speedSlider
+    speedSlider.setBounds(sliderXPosition + sliderSize + xPadding, waveFormHeight + yPadding, sliderSize, sliderSize);
+//    speedSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+//    speedSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+
+    // Set bounds and style for posSlider
+    posSlider.setBounds(sliderXPosition + 2 * (sliderSize + xPadding), waveFormHeight + yPadding, sliderSize, sliderSize);
+//    posSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+//    posSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+    
+    playButton.setBounds(playXPosition, playYPosition, buttonWidth, buttonHeight);
+    stopButton.setBounds(stopXPosition, stopYPosition, buttonWidth, buttonHeight);
+
 }
 
 

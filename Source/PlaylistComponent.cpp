@@ -55,24 +55,20 @@ void PlaylistComponent::paint (juce::Graphics& g)
        drawing code..
     */
 
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
+    g.fillAll (juce::Colour(42, 46, 151));
 
     g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    g.drawRect (getLocalBounds(), 2);   // draw an outline around the component
 
-    g.setColour (juce::Colours::cyan);
-    g.setFont (14.0f);
+    g.setColour (juce::Colours::orange);
+    g.setFont (20.0f);
     g.drawText ("PlaylistComponent", getLocalBounds(),
                 juce::Justification::centred, true);   // draw some placeholder text
 }
 
 void PlaylistComponent::resized()
 {
-//    // This method is where you should set the bounds of any child
-//    // components that your component contains..
-//    tableComponent.setBounds(0,0, getWidth(), getHeight() / 1.5);
-//    addToPlaylistButton.setBounds(getWidth() - 200, (getHeight() / 2) * 1.5, 200, 50);
-//    
+
     for (int i = 0; i < playlistTracks.size(); ++i)
     {
         juce::var track = playlistTracks[i];
@@ -83,13 +79,16 @@ void PlaylistComponent::resized()
         trackDurations.push_back(duration);
     }
     
-    double rowH = getHeight() / 5;
+    tableComponent.setBounds(0,0, getWidth(), getHeight());
 
-    tableComponent.setBounds(0, rowH, getWidth(), getHeight());
-    searchField.setBounds(0,rowH/16, getWidth(), rowH);
     
-    searchField.setTextToShowWhenEmpty("Search for a track.....", juce::Colours::orange);
-    
+//    double rowH = getHeight() / 5;
+//
+//    tableComponent.setBounds(0, rowH, getWidth(), getHeight());
+//    searchField.setBounds(0,rowH/16, getWidth(), rowH);
+//    
+//    searchField.setTextToShowWhenEmpty("Search for a track.....", juce::Colours::orange);
+//    
     // Update the content after setting the bounds
     tableComponent.updateContent();
 }
@@ -102,7 +101,8 @@ void PlaylistComponent::paintRowBackground(juce::Graphics& g, int rowNumber, int
     if (rowIsSelected) {
         g.fillAll(juce::Colours::orange);
     } else {
-        g.fillAll(juce::Colours::darkgrey);
+        g.fillAll (juce::Colour(42, 46, 51));
+        g.setColour(juce::Colours::snow);
     }
 }
 void PlaylistComponent::paintCell(juce::Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) {

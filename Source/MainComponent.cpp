@@ -56,10 +56,9 @@ void MainComponent::releaseResources() {
 
 
 void MainComponent::resized() {
-    deck1.setBounds(0, 0, getWidth()/2, getHeight()/2);
-    deck2.setBounds(getWidth()/2, 0, getWidth()/2, getHeight()/2);
-    playlist.setBounds(0, getWidth()/2, getWidth(), getHeight()/2);
-
+    deck1.setBounds(0, 0, getWidth() / 2, getHeight() * 2 / 3);
+    deck2.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight() * 2 / 3);
+    playlist.setBounds(0, getHeight() * 2 / 3, getWidth(), getHeight() / 3);
 }
 
 void MainComponent::paint(juce::Graphics &g)
@@ -67,7 +66,6 @@ void MainComponent::paint(juce::Graphics &g)
     // Your drawing code goes here
     // For example, fill the background with a color:
     g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
-
     // Add any other drawing instructions here
 }
 

@@ -33,6 +33,15 @@ static const unsigned char temp_binary_data_0[] =
 "    \r\n"
 "    addAndMakeVisible(playlist);\r\n"
 "    \r\n"
+"    /** Setting up a callback for the LoadIntoDeckCallback in the playlist component.\r\n"
+"        The callback is a lambda function capturing the current instance of the MainComponent.\r\n"
+"         This way, I could pass in the track URL and the deck ID from the playlist properly.\r\n"
+"    */\r\n"
+"\r\n"
+"    playlist.setLoadIntoDeckCallback([this](const juce::String& trackURL, int deckId) {\r\n"
+"        loadFileIntoDeck(trackURL, deckId);\r\n"
+"    });\r\n"
+"    \r\n"
 "    formatManager.registerBasicFormats();\r\n"
 "}\r\n"
 "\r\n"
@@ -60,10 +69,9 @@ static const unsigned char temp_binary_data_0[] =
 "\r\n"
 "\r\n"
 "void MainComponent::resized() {\r\n"
-"    deck1.setBounds(0, 0, getWidth()/2, getHeight()/2);\r\n"
-"    deck2.setBounds(getWidth()/2, 0, getWidth()/2, getHeight()/2);\r\n"
-"    playlist.setBounds(0, getWidth()/2, getWidth(), getHeight()/2);\r\n"
-"\r\n"
+"    deck1.setBounds(0, 0, getWidth() / 2, getHeight() * 2 / 3);\r\n"
+"    deck2.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight() * 2 / 3);\r\n"
+"    playlist.setBounds(0, getHeight() * 2 / 3, getWidth(), getHeight() / 3);\r\n"
 "}\r\n"
 "\r\n"
 "void MainComponent::paint(juce::Graphics &g)\r\n"
@@ -71,8 +79,16 @@ static const unsigned char temp_binary_data_0[] =
 "    // Your drawing code goes here\r\n"
 "    // For example, fill the background with a color:\r\n"
 "    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));\r\n"
-"\r\n"
 "    // Add any other drawing instructions here\r\n"
+"}\r\n"
+"\r\n"
+"// Implementation of loading the track into the selected deck\r\n"
+"void MainComponent::loadFileIntoDeck(const juce::String& trackURL, int deckId) {\r\n"
+"    if (deckId == 1) {\r\n"
+"        deck1.loadFileIntoDeck(trackURL, deckId);\r\n"
+"    } else if (deckId == 2) {\r\n"
+"        deck2.loadFileIntoDeck(trackURL, deckId);\r\n"
+"    }\r\n"
 "}\r\n";
 
 const char* MainComponent_cpp = (const char*) temp_binary_data_0;
@@ -89,7 +105,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
 
     switch (hash)
     {
-        case 0x39024608:  numBytes = 2295; return MainComponent_cpp;
+        case 0x39024608:  numBytes = 3068; return MainComponent_cpp;
         default: break;
     }
 

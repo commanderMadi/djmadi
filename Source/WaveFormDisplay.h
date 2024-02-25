@@ -18,7 +18,7 @@
 class WaveFormDisplay  : public juce::Component, public juce::ChangeListener
 {
 public:
-    WaveFormDisplay(juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse);
+    WaveFormDisplay(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage, juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse);
     ~WaveFormDisplay() override;
 
     void paint (juce::Graphics&g) override;
@@ -33,6 +33,8 @@ public:
     void setRelativePosition(double pos);
 
 private:
+    juce::Colour colorToUse;
+    juce::String waveFormDefaultMessage;
     juce::AudioThumbnail audioThumb;
     bool fileLoaded;
     double position;
