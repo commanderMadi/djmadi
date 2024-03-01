@@ -41,6 +41,9 @@ public:
     
     void loadFileIntoDeck(const juce::String& trackURL, int deckId);
     void updateNowPlayingLabel(const juce::String& trackTitle);
+    
+    void setLoopRegion(double loopStart, double loopEnd);
+
 
 
 private:
@@ -60,6 +63,8 @@ private:
     std::unique_ptr<CustomDesign> customLoopButtonColor;
 
     std::unique_ptr<CustomDesign> customSliderBackgroundColor;
+    
+    
 
     DJAudioPlayer* djAudioPlayer;
     WaveFormDisplay waveFormDisplay;

@@ -37,6 +37,8 @@ public:
     double getLoopStart() const { return loopStart; }
     double getLoopEnd() const { return loopEnd; }
     
+    bool getIsLoopEnabled() const { return isLoopEnabled; }
+    
     void start();
     void stop();
     

@@ -44,8 +44,11 @@ private:
     juce::AudioThumbnail audioThumb;
     bool fileLoaded;
     double position;
-    double loopStart { 0.0};
-    double loopEnd = {0.0};
+    bool loopRegionEnabled;
+    double loopRegionStart;
+    double loopRegionEnd;
+
+    
     std::function<void(double)> loopControlsUpdater;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveFormDisplay)
 };

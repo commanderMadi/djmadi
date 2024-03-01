@@ -41,13 +41,22 @@ void WaveFormDisplay::paint (juce::Graphics& g)
     
     if (fileLoaded) {
         audioThumb.drawChannel(g, getLocalBounds(), 0, audioThumb.getTotalLength(), 0, 1);
-        if (loopStart < loopEnd) {
-            g.setColour(juce::Colours::lightblue.withAlpha(0.5f));
-            juce::Rectangle<float> loopRegion(
-                loopStart * getWidth(), 0,
-                (loopEnd - loopStart) * getWidth(), getHeight()
-            );
-            g.fillRect(loopRegion);
+        if (loopRegionEnabled) {
+            DBG("YES I WILL REPAINT RIGHT AWAY!");
+
+
+            int loopStartX = juce::roundToInt(loopRegionStart * getWidth());
+            int loopWidth = juce::roundToInt((loopRegionEnd - loopRegionStart) * getWidth());
+            juce::Rectangle<int> loopRegionRect(loopStartX, 0, loopWidth, getHeight());
+            
+            DBG("LOOP REGION START: " << loopStartX);
+            DBG("LOOP REGION WIDTH: " << loopWidth);
+
+            g.setColour(juce::Colours::white.withAlpha(0.8f));  // Adjust the color and alpha as needed
+
+            g.fillRect(loopRegionRect);
+
+            
         }
         g.setColour(juce::Colours::white); // or any color that stands out
         auto drawPosition = static_cast<int>(position * getWidth());
@@ -94,10 +103,14 @@ void WaveFormDisplay::setRelativePosition(double pos) {
     
 }
 void WaveFormDisplay::setLoopRegion(double start, double end) {
-    loopStart = start;
-    loopEnd = end;
+    loopRegionStart = start / audioThumb.getTotalLength();
+    loopRegionEnd = end / audioThumb.getTotalLength();
+    loopRegionEnabled = (start < end);
+
     repaint();
+    DBG("REPAINTING WAVE FORM NOW");
 }
+
 void WaveFormDisplay::setLoopControlsUpdater(std::function<void(double)> updater) {
     loopControlsUpdater = updater;
 }

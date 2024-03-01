@@ -107,6 +107,16 @@ void DeckGUI::buttonClicked(juce::Button* button) {
         bool shouldLoop = loopButton.getToggleState();
         std::cout << "Loop button state: " << shouldLoop << std::endl;
         djAudioPlayer->enableLoop(shouldLoop, 3.0);
+        if (shouldLoop) {
+            double loopStart = djAudioPlayer->getLoopStart();
+            double loopEnd = djAudioPlayer->getLoopEnd();
+            setLoopRegion(loopStart, loopEnd);
+            DBG("Loop region set: " << loopStart << " - " << loopEnd);
+        } else {
+            // Clear loop region
+            setLoopRegion(0.0, 0.0);
+            DBG("Loop region cleared");
+        }
     }
 }
 void DeckGUI::sliderValueChanged(juce::Slider* slider) {
@@ -157,7 +167,7 @@ void DeckGUI::resized() {
     
     int sliderXPosition = (getWidth() - sliderSize * 3 - xPadding * 2) / 2; // Adjust padding and position
 
-    waveFormDisplay.setBounds(0, 0, getWidth(), rowH);
+    waveFormDisplay.setBounds(0, 0, getWidth(), rowH / 1.2);
     int waveFormHeight = waveFormDisplay.getHeight();
 
     // Set bounds and style for gainSlider
@@ -215,3 +225,7 @@ void DeckGUI::loadFileIntoDeck(const juce::String& trackURL, int deckId) {
 void DeckGUI::updateNowPlayingLabel(const juce::String& trackTitle) {
     nowPlayingLabel.setText("Now Playing: " + trackTitle, juce::dontSendNotification);
 };
+
+void DeckGUI::setLoopRegion(double loopStart, double loopEnd) {
+    waveFormDisplay.setLoopRegion(loopStart, loopEnd);
+}
