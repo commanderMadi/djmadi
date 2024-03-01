@@ -31,6 +31,12 @@ public:
     
     // Set the relative position of the playhead
     void setRelativePosition(double pos);
+    
+    
+    void setLoopRegion(double loopStart, double loopEnd);
+    
+    void setLoopControlsUpdater(std::function<void(double)> updater);
+
 
 private:
     juce::Colour colorToUse;
@@ -38,5 +44,8 @@ private:
     juce::AudioThumbnail audioThumb;
     bool fileLoaded;
     double position;
+    double loopStart { 0.0};
+    double loopEnd = {0.0};
+    std::function<void(double)> loopControlsUpdater;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveFormDisplay)
 };

@@ -21,12 +21,21 @@ public:
     void getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferToFill) override;
     void releaseResources() override;
     
-    /** TO DO:  remove loadFile when refactoring */
     void loadFile(juce::File audioFile);
     void setGain(double gain);
     void setSpeed(double ratio);
     void setPosition(double posInSecs);
     void setRelativePosition(double pos);
+    
+    void setLoopPoints(double start, double end);
+    void enableLoop(bool shouldLoop, double loopDuration);
+    
+    void setLoopStart(double pos);
+    void setLoopEnd(double pos);
+
+    
+    double getLoopStart() const { return loopStart; }
+    double getLoopEnd() const { return loopEnd; }
     
     void start();
     void stop();
@@ -40,4 +49,8 @@ private:
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
     juce::AudioTransportSource transportSource;
     juce::ResamplingAudioSource resamplingSource{&transportSource, false, 2};
+    double loopStart{ 0.0 };
+    double loopEnd{ 0.0 };
+    double loopDuration{ 3.0 };
+    bool isLoopEnabled;
 };

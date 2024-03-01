@@ -40,9 +40,18 @@ void WaveFormDisplay::paint (juce::Graphics& g)
     g.setColour (colorToUse);
     
     if (fileLoaded) {
-        audioThumb.drawChannel(g, getLocalBounds(),0,audioThumb.getTotalLength(),0,1);
-        g.setColour(colorToUse);
-        g.drawRect(position * getWidth(), 0, getWidth() / 20, getHeight());
+        audioThumb.drawChannel(g, getLocalBounds(), 0, audioThumb.getTotalLength(), 0, 1);
+        if (loopStart < loopEnd) {
+            g.setColour(juce::Colours::lightblue.withAlpha(0.5f));
+            juce::Rectangle<float> loopRegion(
+                loopStart * getWidth(), 0,
+                (loopEnd - loopStart) * getWidth(), getHeight()
+            );
+            g.fillRect(loopRegion);
+        }
+        g.setColour(juce::Colours::white); // or any color that stands out
+        auto drawPosition = static_cast<int>(position * getWidth());
+        g.drawLine(drawPosition, 0, drawPosition, getHeight(), 2); // Last parameter is the line thickness
     } else {
         g.setFont (14.0f);
         g.drawText (waveFormDefaultMessage, getLocalBounds(),
@@ -74,9 +83,21 @@ void WaveFormDisplay::changeListenerCallback (juce::ChangeBroadcaster* source) {
     repaint();
 }
 void WaveFormDisplay::setRelativePosition(double pos) {
+    
     if (position != pos) {
         position = pos;
         repaint();
     }
+    if (loopControlsUpdater != nullptr) {
+        loopControlsUpdater(pos);
+    }
     
+}
+void WaveFormDisplay::setLoopRegion(double start, double end) {
+    loopStart = start;
+    loopEnd = end;
+    repaint();
+}
+void WaveFormDisplay::setLoopControlsUpdater(std::function<void(double)> updater) {
+    loopControlsUpdater = updater;
 }

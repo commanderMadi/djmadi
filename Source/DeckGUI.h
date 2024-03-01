@@ -46,6 +46,10 @@ public:
 private:
     juce::TextButton playButton;
     juce::TextButton stopButton;
+    juce::ToggleButton loopButton;
+    
+    bool isTrackPlaying = false;
+    
     juce::Slider gainSlider;
     juce::Slider speedSlider;
     juce::Slider posSlider;
@@ -53,6 +57,8 @@ private:
 
     std::unique_ptr<CustomDesign> customPlayButtonColor;
     std::unique_ptr<CustomDesign> customStopButtonColor;
+    std::unique_ptr<CustomDesign> customLoopButtonColor;
+
     std::unique_ptr<CustomDesign> customSliderBackgroundColor;
 
     DJAudioPlayer* djAudioPlayer;

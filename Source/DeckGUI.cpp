@@ -18,9 +18,13 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage,
     
     customPlayButtonColor = std::make_unique<CustomDesign>(juce::Colour(27, 195, 125));
     customStopButtonColor = std::make_unique<CustomDesign>(juce::Colour(234, 21, 34));
+    customLoopButtonColor = std::make_unique<CustomDesign>(juce::Colour(27, 195, 125));
+
     customSliderBackgroundColor = std::make_unique<CustomDesign>(juce::Colour(184, 224, 242));
     addAndMakeVisible(playButton);
     addAndMakeVisible(stopButton);
+    addAndMakeVisible(loopButton);
+
 
     addAndMakeVisible(gainSlider);
     addAndMakeVisible(speedSlider);
@@ -40,6 +44,16 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage,
 
     addAndMakeVisible(waveFormDisplay);
     
+    waveFormDisplay.setLoopControlsUpdater([this](double pos) {
+        if (!loopButton.getToggleState()) {
+                if (pos <= djAudioPlayer->getLoopStart()) {
+                    djAudioPlayer->setLoopStart(pos);
+                } else if (pos >= djAudioPlayer->getLoopEnd()) {
+                    djAudioPlayer->setLoopEnd(pos);
+                }
+        }
+    });
+    
     addAndMakeVisible(nowPlayingLabel);
     nowPlayingLabel.setText("Now Playing: ", juce::dontSendNotification);
     nowPlayingLabel.setJustificationType(juce::Justification::centredLeft);
@@ -50,9 +64,12 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage,
     stopButton.setButtonText("Stop");
     stopButton.setLookAndFeel(customStopButtonColor.get());
 
+    loopButton.setButtonText("Loop");
+    loopButton.setLookAndFeel(customLoopButtonColor.get());
     
     playButton.addListener(this);
     stopButton.addListener(this);
+    loopButton.addListener(this);
     
     gainSlider.addListener(this);
     speedSlider.addListener(this);
@@ -70,6 +87,7 @@ DeckGUI::~DeckGUI() {
     stopTimer();
     playButton.setLookAndFeel(nullptr);
     stopButton.setLookAndFeel(nullptr);
+    loopButton.setLookAndFeel(nullptr);
     gainSlider.setLookAndFeel(nullptr);
     speedSlider.setLookAndFeel(nullptr);
     posSlider.setLookAndFeel(nullptr);
@@ -78,9 +96,17 @@ DeckGUI::~DeckGUI() {
 void DeckGUI::buttonClicked(juce::Button* button) {
     if (button == &playButton) {
         djAudioPlayer->start();
+        isTrackPlaying = true;
     }
     if (button == &stopButton) {
         djAudioPlayer->stop();
+        isTrackPlaying = false;
+    }
+    if (button == &loopButton) {
+        DBG("Clicked loop button");
+        bool shouldLoop = loopButton.getToggleState();
+        std::cout << "Loop button state: " << shouldLoop << std::endl;
+        djAudioPlayer->enableLoop(shouldLoop, 3.0);
     }
 }
 void DeckGUI::sliderValueChanged(juce::Slider* slider) {
@@ -145,6 +171,8 @@ void DeckGUI::resized() {
 
     playButton.setBounds(playXPosition, playYPosition, buttonWidth, buttonHeight);
     stopButton.setBounds(stopXPosition, stopYPosition, buttonWidth, buttonHeight);
+    loopButton.setBounds(stopXPosition, stopYPosition + 50, buttonWidth, buttonHeight);
+
     
 //    nowPlayingLabel.setBounds(10, getHeight() - 30, getWidth() - 20, 20); // Adjust bounds as needed
     int labelWidth = getWidth() - 20; // Adjust the width as necessary
@@ -152,13 +180,15 @@ void DeckGUI::resized() {
     int labelYPosition = rowH + yPadding - labelHeight - 50; // Adjust the vertical offset as necessary
     
     nowPlayingLabel.setBounds((getWidth() - labelWidth) / 2, labelYPosition, labelWidth, labelHeight);
-    
 
 }
 
 
 void DeckGUI::timerCallback() {
-    waveFormDisplay.setRelativePosition(djAudioPlayer->getRelativePosition());
+    if (isTrackPlaying) {
+        DBG("Waveform Position: " << djAudioPlayer->getRelativePosition() << " FROM DECKGUI::timerCallback ");
+        waveFormDisplay.setRelativePosition(djAudioPlayer->getRelativePosition());
+    }
 }
 
 void DeckGUI::loadFileIntoDeck(const juce::String& trackURL, int deckId) {

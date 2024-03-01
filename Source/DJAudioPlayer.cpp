@@ -17,7 +17,17 @@ void DJAudioPlayer::prepareToPlay(int samplesPerBlockExpected, double sampleRate
     transportSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
     resamplingSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
-void DJAudioPlayer::getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferToFill){
+void DJAudioPlayer::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) {
+    if (isLoopEnabled) {
+        double currentPosition = transportSource.getCurrentPosition();
+
+        while (currentPosition >= loopEnd) {
+            currentPosition -= (loopEnd - loopStart);
+        }
+
+        transportSource.setPosition(currentPosition);
+    }
+
     resamplingSource.getNextAudioBlock(bufferToFill);
 }
 void DJAudioPlayer::releaseResources(){
@@ -61,11 +71,12 @@ void DJAudioPlayer::setPosition(double posInSecs){
 
 void DJAudioPlayer::setRelativePosition(double pos) {
     if (pos < 0 || pos > 1) {
-        std::cout << "Warning! Position should be between 0 and 1 DJAudioPlayer::setRelativePosition" << std::endl;
-    } else {
-        double posInSecs = transportSource.getLengthInSeconds() * pos;
-        setPosition(posInSecs);
+        std::cout << "Warning! Invalid position: " << pos << " DJAudioPlayer::setRelativePosition" << std::endl;
+        return;
     }
+
+    double posInSecs = transportSource.getLengthInSeconds() * pos;
+    setPosition(posInSecs);
 }
 
 
@@ -77,6 +88,36 @@ void DJAudioPlayer::stop(){
 }
 
 double DJAudioPlayer::getRelativePosition() {
-    // Calculate the relative position based on the logic of dividing the current position by the audio file total length in seconds
     return transportSource.getCurrentPosition() / transportSource.getLengthInSeconds();
+}
+
+void DJAudioPlayer::setLoopPoints(double start, double end) {
+    // Validate loop points
+    if (start >= 0 && end <= transportSource.getLengthInSeconds() && start < end) {
+        loopStart = start;
+        loopEnd = end;
+    }
+}
+
+void DJAudioPlayer::setLoopStart(double pos) {
+    setLoopPoints(pos, loopEnd);
+}
+
+void DJAudioPlayer::setLoopEnd(double pos) {
+    setLoopPoints(loopStart, pos);
+}
+
+void DJAudioPlayer::enableLoop(bool shouldLoop, double loopDuration) {
+    isLoopEnabled = shouldLoop;
+    this->loopDuration = loopDuration;
+
+    if (isLoopEnabled) {
+        // Set loop end relative to current position
+        double currentPosition = transportSource.getCurrentPosition();
+        setLoopPoints(currentPosition, currentPosition + loopDuration);
+    } else {
+        // Reset loop points when loop is disabled
+        loopStart = 0.0;
+        loopEnd = transportSource.getLengthInSeconds();
+    }
 }
