@@ -42,16 +42,11 @@ void WaveFormDisplay::paint (juce::Graphics& g)
     if (fileLoaded) {
         audioThumb.drawChannel(g, getLocalBounds(), 0, audioThumb.getTotalLength(), 0, 1);
         if (loopRegionEnabled) {
-            DBG("YES I WILL REPAINT RIGHT AWAY!");
-
 
             int loopStartX = juce::roundToInt(loopRegionStart * getWidth());
             int loopWidth = juce::roundToInt((loopRegionEnd - loopRegionStart) * getWidth());
             juce::Rectangle<int> loopRegionRect(loopStartX, 0, loopWidth, getHeight());
             
-            DBG("LOOP REGION START: " << loopStartX);
-            DBG("LOOP REGION WIDTH: " << loopWidth);
-
             g.setColour(juce::Colours::white.withAlpha(0.8f));  // Adjust the color and alpha as needed
 
             g.fillRect(loopRegionRect);
@@ -88,7 +83,6 @@ void WaveFormDisplay::loadFile (juce::File audioFile) {
 }
 
 void WaveFormDisplay::changeListenerCallback (juce::ChangeBroadcaster* source) {
-    std::cout << "Change Received!" << std::endl;
     repaint();
 }
 void WaveFormDisplay::setRelativePosition(double pos) {
@@ -108,7 +102,6 @@ void WaveFormDisplay::setLoopRegion(double start, double end) {
     loopRegionEnabled = (start < end);
 
     repaint();
-    DBG("REPAINTING WAVE FORM NOW");
 }
 
 void WaveFormDisplay::setLoopControlsUpdater(std::function<void(double)> updater) {

@@ -21,6 +21,7 @@
 class DeckGUI : public juce::Component,
                 public juce::Button::Listener,
                 public juce::Slider::Listener,
+                public juce::ComboBox::Listener,
                 public juce::Timer
 {
     
@@ -39,6 +40,8 @@ public:
     void buttonClicked(juce::Button *) override;
     void sliderValueChanged(juce::Slider *) override;
     
+    void comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) override;
+    
     void loadFileIntoDeck(const juce::String& trackURL, int deckId);
     void updateNowPlayingLabel(const juce::String& trackTitle);
     
@@ -50,6 +53,8 @@ private:
     juce::TextButton playButton;
     juce::TextButton stopButton;
     juce::ToggleButton loopButton;
+    juce::ComboBox loopDurations;
+    double currentLoopDuration{1.0};
     
     bool isTrackPlaying = false;
     

@@ -259,7 +259,6 @@ void PlaylistComponent::setLoadIntoDeckCallback(LoadIntoDeckCallback callback) {
 
 void PlaylistComponent::textEditorTextChanged(juce::TextEditor& editor) {
     searchInput = searchField.getText(); // Gets the text which the user has typed in the search bar
-    std::cout << searchInput << std::endl;
     filteredTracks = juce::var();
 
         // Filter tracks based on search input
@@ -267,9 +266,6 @@ void PlaylistComponent::textEditorTextChanged(juce::TextEditor& editor) {
             juce::String trackTitleLowerCase = playlistTracks[i]["title"].toString().toLowerCase();
             if (trackTitleLowerCase.containsIgnoreCase(searchInput.trim())) {
                 filteredTracks.append(playlistTracks[i]);
-                std::cout << "Filtered tracks size: " << filteredTracks.size() << std::endl;
-                std::cout << playlistTracks[i]["title"].toString() << std::endl;
-
             }
         }
     

@@ -24,6 +24,18 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage,
     addAndMakeVisible(playButton);
     addAndMakeVisible(stopButton);
     addAndMakeVisible(loopButton);
+    
+    loopDurations.addItem("0.25 Second", 1);
+    loopDurations.addItem("0.5 Second", 2);
+    loopDurations.addItem("1 Second", 3);
+    loopDurations.addItem("2 Seconds", 4);
+    loopDurations.addItem("3 Seconds", 5);
+    loopDurations.setSelectedId(3);
+    loopDurations.addListener(this);
+
+
+    addAndMakeVisible(loopDurations);
+    loopDurations.setVisible(false);
 
 
     addAndMakeVisible(gainSlider);
@@ -103,37 +115,33 @@ void DeckGUI::buttonClicked(juce::Button* button) {
         isTrackPlaying = false;
     }
     if (button == &loopButton) {
-        DBG("Clicked loop button");
         bool shouldLoop = loopButton.getToggleState();
-        std::cout << "Loop button state: " << shouldLoop << std::endl;
-        djAudioPlayer->enableLoop(shouldLoop, 3.0);
+        djAudioPlayer->enableLoop(shouldLoop, currentLoopDuration);
+
         if (shouldLoop) {
             double loopStart = djAudioPlayer->getLoopStart();
             double loopEnd = djAudioPlayer->getLoopEnd();
             setLoopRegion(loopStart, loopEnd);
-            DBG("Loop region set: " << loopStart << " - " << loopEnd);
         } else {
             // Clear loop region
             setLoopRegion(0.0, 0.0);
-            DBG("Loop region cleared");
         }
+        loopDurations.setVisible(shouldLoop);
+
     }
 }
 void DeckGUI::sliderValueChanged(juce::Slider* slider) {
     if (slider == &gainSlider) {
-        std::cout << "Gain Slider Value Updated: " << slider->getValue() << std::endl;
         double gain = gainSlider.getValue();
         djAudioPlayer->setGain(gain);
     }
 
     if (slider == &speedSlider) {
-        std::cout << "Speed Slider Value Updated: " << slider->getValue() << std::endl;
         double ratio = speedSlider.getValue();
         djAudioPlayer->setSpeed(ratio);
     }
 
     if (slider == &posSlider) {
-        std::cout << "Position Slider Value Updated: " << slider->getValue() << std::endl;
         double posInSecs = posSlider.getValue();
         djAudioPlayer->setRelativePosition(posInSecs);
     }
@@ -181,7 +189,8 @@ void DeckGUI::resized() {
 
     playButton.setBounds(playXPosition, playYPosition, buttonWidth, buttonHeight);
     stopButton.setBounds(stopXPosition, stopYPosition, buttonWidth, buttonHeight);
-    loopButton.setBounds(stopXPosition, stopYPosition + 50, buttonWidth, buttonHeight);
+    loopButton.setBounds(10, stopYPosition + 50, buttonWidth / 2, buttonHeight);
+    loopDurations.setBounds(loopButton.getWidth() + 20, stopYPosition + 60, buttonWidth, buttonHeight / 2);
 
     
 //    nowPlayingLabel.setBounds(10, getHeight() - 30, getWidth() - 20, 20); // Adjust bounds as needed
@@ -196,7 +205,6 @@ void DeckGUI::resized() {
 
 void DeckGUI::timerCallback() {
     if (isTrackPlaying) {
-        DBG("Waveform Position: " << djAudioPlayer->getRelativePosition() << " FROM DECKGUI::timerCallback ");
         waveFormDisplay.setRelativePosition(djAudioPlayer->getRelativePosition());
     }
 }
@@ -207,7 +215,6 @@ void DeckGUI::loadFileIntoDeck(const juce::String& trackURL, int deckId) {
 
     if (deckId == 1) {
         // Load into Deck 1
-        // Implement your logic here
         std::cout << "Loading into Deck 1: " << trackURL << std::endl;
         djAudioPlayer->loadFile(file);
         waveFormDisplay.loadFile(file);
@@ -229,3 +236,36 @@ void DeckGUI::updateNowPlayingLabel(const juce::String& trackTitle) {
 void DeckGUI::setLoopRegion(double loopStart, double loopEnd) {
     waveFormDisplay.setLoopRegion(loopStart, loopEnd);
 }
+
+void DeckGUI::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) {
+    if (comboBoxThatHasChanged == &loopDurations)
+    {
+        int selectedId = loopDurations.getSelectedId();
+        bool shouldLoop = loopButton.getToggleState();
+
+         if (selectedId == 1) {
+            currentLoopDuration = 0.25;
+         } else if (selectedId == 2) {
+             currentLoopDuration = 0.5;
+         } else if (selectedId >= 3) {
+             currentLoopDuration = selectedId - 2;
+         }
+        
+            if (isTrackPlaying) {
+            djAudioPlayer->enableLoop(true, currentLoopDuration);
+            }
+        
+            if (shouldLoop) {
+
+            double loopStart = djAudioPlayer->getLoopStart();
+            double loopEnd = djAudioPlayer->getLoopEnd();
+            setLoopRegion(loopStart, loopEnd);
+        } else {
+            // Clear loop region
+            setLoopRegion(0.0, 0.0);
+        }
+        
+    }
+}
+    
+
