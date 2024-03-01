@@ -91,19 +91,12 @@ void WaveFormDisplay::setRelativePosition(double pos) {
         position = pos;
         repaint();
     }
-    if (loopControlsUpdater != nullptr) {
-        loopControlsUpdater(pos);
-    }
-    
 }
+
 void WaveFormDisplay::setLoopRegion(double start, double end) {
     loopRegionStart = start / audioThumb.getTotalLength();
     loopRegionEnd = end / audioThumb.getTotalLength();
     loopRegionEnabled = (start < end);
 
     repaint();
-}
-
-void WaveFormDisplay::setLoopControlsUpdater(std::function<void(double)> updater) {
-    loopControlsUpdater = updater;
 }

@@ -18,8 +18,6 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage,
     
     customPlayButtonColor = std::make_unique<CustomDesign>(juce::Colour(27, 195, 125));
     customStopButtonColor = std::make_unique<CustomDesign>(juce::Colour(234, 21, 34));
-    customLoopButtonColor = std::make_unique<CustomDesign>(juce::Colour(27, 195, 125));
-
     customSliderBackgroundColor = std::make_unique<CustomDesign>(juce::Colour(184, 224, 242));
     addAndMakeVisible(playButton);
     addAndMakeVisible(stopButton);
@@ -56,19 +54,19 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage,
 
     addAndMakeVisible(waveFormDisplay);
     
-    waveFormDisplay.setLoopControlsUpdater([this](double pos) {
-        if (!loopButton.getToggleState()) {
-                if (pos <= djAudioPlayer->getLoopStart()) {
-                    djAudioPlayer->setLoopStart(pos);
-                } else if (pos >= djAudioPlayer->getLoopEnd()) {
-                    djAudioPlayer->setLoopEnd(pos);
-                }
-        }
-    });
     
     addAndMakeVisible(nowPlayingLabel);
+    addAndMakeVisible(gainSliderLabel);
+    addAndMakeVisible(speedSliderLabel);
+    addAndMakeVisible(posSliderLabel);
     nowPlayingLabel.setText("Now Playing: ", juce::dontSendNotification);
+    gainSliderLabel.setText("Gain", juce::dontSendNotification);
+    speedSliderLabel.setText("Speed", juce::dontSendNotification);
+    posSliderLabel.setText("Position", juce::dontSendNotification);
+
     nowPlayingLabel.setJustificationType(juce::Justification::centredLeft);
+    gainSliderLabel.setJustificationType(juce::Justification::centredLeft);
+
 
     playButton.setButtonText("Play");
     playButton.setLookAndFeel(customPlayButtonColor.get());
@@ -77,7 +75,6 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage,
     stopButton.setLookAndFeel(customStopButtonColor.get());
 
     loopButton.setButtonText("Loop");
-    loopButton.setLookAndFeel(customLoopButtonColor.get());
     
     playButton.addListener(this);
     stopButton.addListener(this);
@@ -99,7 +96,6 @@ DeckGUI::~DeckGUI() {
     stopTimer();
     playButton.setLookAndFeel(nullptr);
     stopButton.setLookAndFeel(nullptr);
-    loopButton.setLookAndFeel(nullptr);
     gainSlider.setLookAndFeel(nullptr);
     speedSlider.setLookAndFeel(nullptr);
     posSlider.setLookAndFeel(nullptr);
@@ -165,6 +161,8 @@ void DeckGUI::resized() {
     int sliderSize = 100;
     int xPadding = 10;
     int yPadding = 100;
+    int labelWidth = getWidth() - 20;
+    int labelHeight = 20;
 
 
     int playXPosition = (getWidth() - buttonWidth) / 2;
@@ -192,13 +190,14 @@ void DeckGUI::resized() {
     loopButton.setBounds(10, stopYPosition + 50, buttonWidth / 2, buttonHeight);
     loopDurations.setBounds(loopButton.getWidth() + 20, stopYPosition + 60, buttonWidth, buttonHeight / 2);
 
+    gainSliderLabel.setBounds(gainSlider.getX() + 26, gainSlider.getY() + 110, labelWidth, labelHeight);
+    speedSliderLabel.setBounds(speedSlider.getX() + 26, speedSlider.getY() + 110, labelWidth, labelHeight);
+    posSliderLabel.setBounds(posSlider.getX() + 26, posSlider.getY() + 110, labelWidth, labelHeight);
+
+
+    int nowPlayingLabelYPosition = rowH + yPadding - labelHeight - 50; // Adjust the vertical offset as necessary
     
-//    nowPlayingLabel.setBounds(10, getHeight() - 30, getWidth() - 20, 20); // Adjust bounds as needed
-    int labelWidth = getWidth() - 20; // Adjust the width as necessary
-    int labelHeight = 20; // Adjust the height as necessary
-    int labelYPosition = rowH + yPadding - labelHeight - 50; // Adjust the vertical offset as necessary
-    
-    nowPlayingLabel.setBounds((getWidth() - labelWidth) / 2, labelYPosition, labelWidth, labelHeight);
+    nowPlayingLabel.setBounds((getWidth() - labelWidth) / 2, nowPlayingLabelYPosition, labelWidth, labelHeight);
 
 }
 

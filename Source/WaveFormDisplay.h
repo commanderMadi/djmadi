@@ -35,8 +35,6 @@ public:
     
     void setLoopRegion(double loopStart, double loopEnd);
     
-    void setLoopControlsUpdater(std::function<void(double)> updater);
-
 
 private:
     juce::Colour colorToUse;
@@ -49,6 +47,5 @@ private:
     double loopRegionEnd;
 
     
-    std::function<void(double)> loopControlsUpdater;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveFormDisplay)
 };
