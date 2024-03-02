@@ -12,64 +12,57 @@
 #include "WaveFormDisplay.h"
 
 //==============================================================================
-WaveFormDisplay::WaveFormDisplay(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage, juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse) : colorToUse(colorToUse), waveFormDefaultMessage(waveFormDefaultMessage), audioThumb(1000, formatManagerToUse, cacheToUse), fileLoaded(false), position(0)
-{
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
-    
+WaveFormDisplay::WaveFormDisplay(juce::Colour &colorToUse,
+                                 juce::String &waveFormDefaultMessage,
+                                 juce::AudioFormatManager &formatManagerToUse,
+                                 juce::AudioThumbnailCache &cacheToUse)
+                                 : colorToUse(colorToUse),
+                                   waveFormDefaultMessage(waveFormDefaultMessage),
+                                   audioThumb(1000, formatManagerToUse, cacheToUse),
+                                   fileLoaded(false),
+                                   position(0) {
+ 
     audioThumb.addChangeListener(this);
 }
 
-WaveFormDisplay::~WaveFormDisplay()
-{
-}
+WaveFormDisplay::~WaveFormDisplay(){}
 
-void WaveFormDisplay::paint (juce::Graphics& g)
-{
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
+void WaveFormDisplay::paint (juce::Graphics& g) {
 
-       You should replace everything in this method with your own
-       drawing code..
-    */
     g.fillAll (juce::Colour(42, 46, 51));
     g.setColour (juce::Colours::grey);
     
-    g.drawRect (getLocalBounds(), 1.5);   // draw an outline around the component
+    // draw an outline around the component
+    g.drawRect (getLocalBounds(), 1.5);
 
     g.setColour (colorToUse);
     
     if (fileLoaded) {
         audioThumb.drawChannel(g, getLocalBounds(), 0, audioThumb.getTotalLength(), 0, 1);
+        
+        // If the user enabled the looping option, draw the loop region on the wave form
         if (loopRegionEnabled) {
-
             int loopStartX = juce::roundToInt(loopRegionStart * getWidth());
             int loopWidth = juce::roundToInt((loopRegionEnd - loopRegionStart) * getWidth());
             juce::Rectangle<int> loopRegionRect(loopStartX, 0, loopWidth, getHeight());
             
-            g.setColour(juce::Colours::white.withAlpha(0.8f));  // Adjust the color and alpha as needed
-
+            g.setColour(juce::Colours::greenyellow.withAlpha(0.8f));
             g.fillRect(loopRegionRect);
-
-            
         }
-        g.setColour(juce::Colours::white); // or any color that stands out
+        
+        // Set the playhead shape and color
+        g.setColour(juce::Colours::white);
         auto drawPosition = static_cast<int>(position * getWidth());
-        g.drawLine(drawPosition, 0, drawPosition, getHeight(), 2); // Last parameter is the line thickness
+        g.drawLine(drawPosition, 0, drawPosition, getHeight(), 2);
     } else {
+        // Add some text if there is no loaded file.
         g.setFont (14.0f);
         g.drawText (waveFormDefaultMessage, getLocalBounds(),
                     juce::Justification::centred, true);   // draw some placeholder text
     }
-
 }
 
-void WaveFormDisplay::resized()
-{
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
-}
+void WaveFormDisplay::resized() {}
 
 void WaveFormDisplay::loadFile (juce::File audioFile) {
     audioThumb.clear();
@@ -78,15 +71,14 @@ void WaveFormDisplay::loadFile (juce::File audioFile) {
         std::cout << "WFD loadFile working properly" << std::endl;
     } else {
         std::cout << "WFD loadFile failed to work properly" << std::endl;
-
     }
 }
 
 void WaveFormDisplay::changeListenerCallback (juce::ChangeBroadcaster* source) {
     repaint();
 }
+
 void WaveFormDisplay::setRelativePosition(double pos) {
-    
     if (position != pos) {
         position = pos;
         repaint();
@@ -94,9 +86,10 @@ void WaveFormDisplay::setRelativePosition(double pos) {
 }
 
 void WaveFormDisplay::setLoopRegion(double start, double end) {
+    // To get the correct position of the loop start and end on the waveform, divide the position of each by the total length of the track
     loopRegionStart = start / audioThumb.getTotalLength();
     loopRegionEnd = end / audioThumb.getTotalLength();
+    // As long as the start is less than the end, the loop region will be drawn consistently
     loopRegionEnabled = (start < end);
-
     repaint();
 }

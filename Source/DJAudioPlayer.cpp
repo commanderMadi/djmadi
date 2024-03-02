@@ -13,59 +13,61 @@ DJAudioPlayer::DJAudioPlayer(juce::AudioFormatManager& _formatManager) : formatM
 DJAudioPlayer::~DJAudioPlayer() {}
 
 void DJAudioPlayer::prepareToPlay(int samplesPerBlockExpected, double sampleRate) {
-    
     transportSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
     resamplingSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
+
 void DJAudioPlayer::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill) {
     if (isLoopEnabled) {
         double currentPosition = transportSource.getCurrentPosition();
-
+        
+        // As long as the track looping didn't end, keep resetting the current position between the end and start boundaries
         while (currentPosition >= loopEnd) {
             currentPosition -= (loopEnd - loopStart);
         }
 
         transportSource.setPosition(currentPosition);
     }
-
+    
     resamplingSource.getNextAudioBlock(bufferToFill);
 }
-void DJAudioPlayer::releaseResources(){
+
+void DJAudioPlayer::releaseResources() {
     transportSource.releaseResources();
     resamplingSource.releaseResources();
 }
 
-void DJAudioPlayer::loadFile(juce::File audioFile){
+void DJAudioPlayer::loadFile(juce::File audioFile) {
     juce::AudioFormatReader* reader = formatManager.createReaderFor(audioFile);
-    if (reader != nullptr)
-    {
+    if (reader != nullptr) {
+    // Loading the file into the audio player
     std::unique_ptr<juce::AudioFormatReaderSource> newSource
     (new juce::AudioFormatReaderSource (reader, true));
     transportSource.setSource (newSource.get(),
     0, nullptr, reader->sampleRate);
     readerSource.reset (newSource.release());
-    }
-    else
-    {
+    } else {
     std::cout << "Something went wrong while loading the file " << std::endl;
     }
 }
 
-void DJAudioPlayer::setGain(double gain){
+void DJAudioPlayer::setGain(double gain) {
     if (gain < 0 || gain > 1) {
         std::cout << "Warning! Gain should be between 0 and 1 DJAudioPlayer::setGain" << std::endl;
     } else {
         transportSource.setGain(gain);
     }
 }
-void DJAudioPlayer::setSpeed(double ratio){
-    if (ratio < 0 || ratio > 100) {
-        std::cout << "Warning! Speed should be between 0 and 100 DJAudioPlayer::setSpeed" << std::endl;
+
+void DJAudioPlayer::setSpeed(double ratio) {
+    // A ratio of 100 was too far. 4 is reasonable
+    if (ratio < 0 || ratio > 4) {
+        std::cout << "Warning! Speed should be between 0 and 4 DJAudioPlayer::setSpeed" << std::endl;
     } else {
         resamplingSource.setResamplingRatio(ratio);
     }
 }
-void DJAudioPlayer::setPosition(double posInSecs){
+void DJAudioPlayer::setPosition(double posInSecs) {
     transportSource.setPosition(posInSecs);
 }
 
@@ -74,16 +76,14 @@ void DJAudioPlayer::setRelativePosition(double pos) {
         std::cout << "Warning! Invalid position: " << pos << " DJAudioPlayer::setRelativePosition" << std::endl;
         return;
     }
-
     double posInSecs = transportSource.getLengthInSeconds() * pos;
     setPosition(posInSecs);
 }
 
-
-void DJAudioPlayer::start(){
+void DJAudioPlayer::start() {
     transportSource.start();
 }
-void DJAudioPlayer::stop(){
+void DJAudioPlayer::stop() {
     transportSource.stop();
 }
 
@@ -91,20 +91,13 @@ double DJAudioPlayer::getRelativePosition() {
     return transportSource.getCurrentPosition() / transportSource.getLengthInSeconds();
 }
 
+
 void DJAudioPlayer::setLoopPoints(double start, double end) {
-    // Validate loop points
+    // Validate loop start and end points
     if (start >= 0 && end <= transportSource.getLengthInSeconds() && start < end) {
         loopStart = start;
         loopEnd = end;
     }
-}
-
-void DJAudioPlayer::setLoopStart(double pos) {
-    setLoopPoints(pos, loopEnd);
-}
-
-void DJAudioPlayer::setLoopEnd(double pos) {
-    setLoopPoints(loopStart, pos);
 }
 
 void DJAudioPlayer::enableLoop(bool shouldLoop, double loopDuration) {
@@ -120,4 +113,24 @@ void DJAudioPlayer::enableLoop(bool shouldLoop, double loopDuration) {
         loopStart = 0.0;
         loopEnd = transportSource.getLengthInSeconds();
     }
+}
+
+void DJAudioPlayer::setLoopStart(double pos) {
+    setLoopPoints(pos, loopEnd);
+}
+
+void DJAudioPlayer::setLoopEnd(double pos) {
+    setLoopPoints(loopStart, pos);
+}
+
+double DJAudioPlayer::getLoopStart() const {
+    return loopStart;
+}
+
+double DJAudioPlayer::getLoopEnd() const {
+    return loopEnd;
+}
+
+bool DJAudioPlayer::getIsLoopEnabled() const {
+    return isLoopEnabled;
 }

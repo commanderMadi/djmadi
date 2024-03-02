@@ -12,9 +12,14 @@
 #include "DeckGUI.h"
 
 //==============================================================================
-DeckGUI::DeckGUI(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage, DJAudioPlayer* _djAudioPlayer, juce::AudioFormatManager &formatManagerToUse, juce::AudioThumbnailCache &cacheToUse) : djAudioPlayer(_djAudioPlayer), waveFormDisplay(colorToUse, waveFormDefaultMessage, formatManagerToUse, cacheToUse) {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
+DeckGUI::DeckGUI(juce::Colour &colorToUse,
+                 juce::String &waveFormDefaultMessage,
+                 DJAudioPlayer* _djAudioPlayer,
+                 juce::AudioFormatManager &formatManagerToUse,
+                 juce::AudioThumbnailCache &cacheToUse)
+                 : djAudioPlayer(_djAudioPlayer),
+                   waveFormDisplay(colorToUse, waveFormDefaultMessage, formatManagerToUse, cacheToUse) {
+   
     
     customPlayButtonColor = std::make_unique<CustomDesign>(juce::Colour(27, 195, 125));
     customStopButtonColor = std::make_unique<CustomDesign>(juce::Colour(234, 21, 34));
@@ -54,7 +59,6 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage,
 
     addAndMakeVisible(waveFormDisplay);
     
-    
     addAndMakeVisible(nowPlayingLabel);
     addAndMakeVisible(gainSliderLabel);
     addAndMakeVisible(speedSliderLabel);
@@ -66,7 +70,6 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage,
 
     nowPlayingLabel.setJustificationType(juce::Justification::centredLeft);
     gainSliderLabel.setJustificationType(juce::Justification::centredLeft);
-
 
     playButton.setButtonText("Play");
     playButton.setLookAndFeel(customPlayButtonColor.get());
@@ -84,9 +87,8 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse, juce::String &waveFormDefaultMessage,
     speedSlider.addListener(this);
     posSlider.addListener(this);
 
-    
     gainSlider.setRange(0,1);
-    speedSlider.setRange(0,10);
+    speedSlider.setRange(0,3);
     posSlider.setRange(0,1);
     
     startTimer(500);
@@ -106,10 +108,12 @@ void DeckGUI::buttonClicked(juce::Button* button) {
         djAudioPlayer->start();
         isTrackPlaying = true;
     }
+    
     if (button == &stopButton) {
         djAudioPlayer->stop();
         isTrackPlaying = false;
     }
+    
     if (button == &loopButton) {
         bool shouldLoop = loopButton.getToggleState();
         djAudioPlayer->enableLoop(shouldLoop, currentLoopDuration);
@@ -123,9 +127,9 @@ void DeckGUI::buttonClicked(juce::Button* button) {
             setLoopRegion(0.0, 0.0);
         }
         loopDurations.setVisible(shouldLoop);
-
     }
 }
+
 void DeckGUI::sliderValueChanged(juce::Slider* slider) {
     if (slider == &gainSlider) {
         double gain = gainSlider.getValue();
@@ -142,15 +146,14 @@ void DeckGUI::sliderValueChanged(juce::Slider* slider) {
         djAudioPlayer->setRelativePosition(posInSecs);
     }
 }
-void DeckGUI::paint (juce::Graphics& g)
-{
+
+void DeckGUI::paint (juce::Graphics& g) {
 
     g.fillAll (juce::Colour(42, 46, 51));
     
     // Boundaries
     g.setColour (juce::Colours::grey);
     g.drawRect (getLocalBounds(), 1.5);
-
 }
 
 void DeckGUI::resized() {
@@ -163,7 +166,6 @@ void DeckGUI::resized() {
     int yPadding = 100;
     int labelWidth = getWidth() - 20;
     int labelHeight = 20;
-
 
     int playXPosition = (getWidth() - buttonWidth) / 2;
     int playYPosition = (getHeight() - buttonHeight) * 3 / 4;
@@ -194,11 +196,9 @@ void DeckGUI::resized() {
     speedSliderLabel.setBounds(speedSlider.getX() + 26, speedSlider.getY() + 110, labelWidth, labelHeight);
     posSliderLabel.setBounds(posSlider.getX() + 26, posSlider.getY() + 110, labelWidth, labelHeight);
 
-
     int nowPlayingLabelYPosition = rowH + yPadding - labelHeight - 50; // Adjust the vertical offset as necessary
     
     nowPlayingLabel.setBounds((getWidth() - labelWidth) / 2, nowPlayingLabelYPosition, labelWidth, labelHeight);
-
 }
 
 
@@ -219,11 +219,11 @@ void DeckGUI::loadFileIntoDeck(const juce::String& trackURL, int deckId) {
         waveFormDisplay.loadFile(file);
     } else if (deckId == 2) {
         // Load into Deck 2
-        // Implement your logic here
         djAudioPlayer->loadFile(file);
         waveFormDisplay.loadFile(file);
         std::cout << "Loading into Deck 2: " << trackURL << std::endl;
     }
+    
     juce::String trackTitle = file.getFileNameWithoutExtension();
         updateNowPlayingLabel(trackTitle);
 }
@@ -237,11 +237,11 @@ void DeckGUI::setLoopRegion(double loopStart, double loopEnd) {
 }
 
 void DeckGUI::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) {
-    if (comboBoxThatHasChanged == &loopDurations)
-    {
+    if (comboBoxThatHasChanged == &loopDurations) {
         int selectedId = loopDurations.getSelectedId();
         bool shouldLoop = loopButton.getToggleState();
-
+        
+        // loop durations has different ids in the dropdown. Based on that id, I set the loop duration (0.25s, 0.5s, 1s, 2s, 3s)
          if (selectedId == 1) {
             currentLoopDuration = 0.25;
          } else if (selectedId == 2) {
@@ -249,13 +249,12 @@ void DeckGUI::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) {
          } else if (selectedId >= 3) {
              currentLoopDuration = selectedId - 2;
          }
-        
+         // Enable the loop and pass in the user-chosen loop duration
             if (isTrackPlaying) {
             djAudioPlayer->enableLoop(true, currentLoopDuration);
             }
-        
+        // Set the loop region to update the waveform
             if (shouldLoop) {
-
             double loopStart = djAudioPlayer->getLoopStart();
             double loopEnd = djAudioPlayer->getLoopEnd();
             setLoopRegion(loopStart, loopEnd);
@@ -263,8 +262,5 @@ void DeckGUI::comboBoxChanged(juce::ComboBox* comboBoxThatHasChanged) {
             // Clear loop region
             setLoopRegion(0.0, 0.0);
         }
-        
     }
 }
-    
-

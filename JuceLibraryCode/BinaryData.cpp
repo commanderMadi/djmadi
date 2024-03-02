@@ -15,8 +15,7 @@ static const unsigned char temp_binary_data_0[] =
 "\r\n"
 "//==============================================================================\r\n"
 "MainComponent::MainComponent() {\r\n"
-"    // Make sure you set the size of the component after\r\n"
-"    // you add any child components.\r\n"
+"    // Set the size of the app window\r\n"
 "    setSize(800, 800);\r\n"
 "\r\n"
 "    // Some platforms require permissions to open input channels so request that here\r\n"
@@ -30,14 +29,13 @@ static const unsigned char temp_binary_data_0[] =
 "    }\r\n"
 "    addAndMakeVisible(deck1);\r\n"
 "    addAndMakeVisible(deck2);\r\n"
-"    \r\n"
 "    addAndMakeVisible(playlist);\r\n"
 "    \r\n"
 "    /** Setting up a callback for the LoadIntoDeckCallback in the playlist component.\r\n"
 "        The callback is a lambda function capturing the current instance of the MainComponent.\r\n"
 "         This way, I could pass in the track URL and the deck ID from the playlist properly.\r\n"
 "    */\r\n"
-"\r\n"
+"    \r\n"
 "    playlist.setLoadIntoDeckCallback([this](const juce::String& trackURL, int deckId) {\r\n"
 "        loadFileIntoDeck(trackURL, deckId);\r\n"
 "    });\r\n"
@@ -67,7 +65,6 @@ static const unsigned char temp_binary_data_0[] =
 "    mixerSource.releaseResources();\r\n"
 "}\r\n"
 "\r\n"
-"\r\n"
 "void MainComponent::resized() {\r\n"
 "    deck1.setBounds(0, 0, getWidth() / 2, getHeight() * 2 / 3);\r\n"
 "    deck2.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight() * 2 / 3);\r\n"
@@ -76,10 +73,7 @@ static const unsigned char temp_binary_data_0[] =
 "\r\n"
 "void MainComponent::paint(juce::Graphics &g)\r\n"
 "{\r\n"
-"    // Your drawing code goes here\r\n"
-"    // For example, fill the background with a color:\r\n"
-"    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));\r\n"
-"    // Add any other drawing instructions here\r\n"
+"    g.fillAll (juce::Colour(42, 46, 51));\r\n"
 "}\r\n"
 "\r\n"
 "// Implementation of loading the track into the selected deck\r\n"
@@ -105,7 +99,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
 
     switch (hash)
     {
-        case 0x39024608:  numBytes = 3068; return MainComponent_cpp;
+        case 0x39024608:  numBytes = 2823; return MainComponent_cpp;
         default: break;
     }
 

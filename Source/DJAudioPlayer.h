@@ -14,35 +14,84 @@
 class DJAudioPlayer: public juce::AudioSource {
 public:
     DJAudioPlayer(juce::AudioFormatManager& _formatManager);
+    
     ~DJAudioPlayer();
     
     
-    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override ;
+    void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
+    
     void getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferToFill) override;
+    
     void releaseResources() override;
     
+    /**
+     * Loading an audio file into the application
+     * @param file The track file existent on the system
+     */
     void loadFile(juce::File audioFile);
+    
+    /**
+     * Sets the volume of the track
+     * @param gain The track volume
+     */
     void setGain(double gain);
+    /**
+     * Sets the speed of the track
+     * @param speed The track speed
+     */
     void setSpeed(double ratio);
+    /**
+     * Sets the position of the track
+     * @param posInSecs The track position
+     */
     void setPosition(double posInSecs);
+    /**
+     * Sets the position on the track relatively
+     * @param pos The track position
+     */
     void setRelativePosition(double pos);
     
+    /**
+     * Sets the start and end points of the loop
+     * @param start The loop starting position
+     * @param end The loop ending position
+     */
     void setLoopPoints(double start, double end);
+    
+    /**
+     * Toggles the loop functionality on and off
+     * @param shouldLoop A boolean that sets whether the loop should be on/off
+     * @param loopDuration The loop duration
+     */
     void enableLoop(bool shouldLoop, double loopDuration);
     
+    // Setter for loop start
     void setLoopStart(double pos);
+    
+    // Setter for loop end
     void setLoopEnd(double pos);
 
+    // Getter for loop start
+    double getLoopStart() const;
     
-    double getLoopStart() const { return loopStart; }
-    double getLoopEnd() const { return loopEnd; }
+    // Getter for loop end
+    double getLoopEnd() const;
     
-    bool getIsLoopEnabled() const { return isLoopEnabled; }
+    // Getter for loop active status
+    bool getIsLoopEnabled() const;
     
+    /**
+     * Starts the track
+     */
     void start();
+    /**
+     * Stops the track
+     */
     void stop();
     
-    // get the relative position of the playhead
+    /**
+     * Gets the relative position of the playhead
+     */
     double getRelativePosition();
     
     

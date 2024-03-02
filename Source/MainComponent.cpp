@@ -2,8 +2,7 @@
 
 //==============================================================================
 MainComponent::MainComponent() {
-    // Make sure you set the size of the component after
-    // you add any child components.
+    // Set the size of the app window
     setSize(800, 800);
 
     // Some platforms require permissions to open input channels so request that here
@@ -17,14 +16,13 @@ MainComponent::MainComponent() {
     }
     addAndMakeVisible(deck1);
     addAndMakeVisible(deck2);
-    
     addAndMakeVisible(playlist);
     
-    /** Setting up a callback for the LoadIntoDeckCallback in the playlist component.
-        The callback is a lambda function capturing the current instance of the MainComponent.
-         This way, I could pass in the track URL and the deck ID from the playlist properly.
+    /** 
+     Setting up a callback for the LoadIntoDeckCallback in the playlist component.
+     The callback is a lambda function capturing the current instance of the MainComponent.
+     This way, I could pass in the track URL and the deck ID from the playlist properly.
     */
-
     playlist.setLoadIntoDeckCallback([this](const juce::String& trackURL, int deckId) {
         loadFileIntoDeck(trackURL, deckId);
     });
@@ -54,7 +52,6 @@ void MainComponent::releaseResources() {
     mixerSource.releaseResources();
 }
 
-
 void MainComponent::resized() {
     deck1.setBounds(0, 0, getWidth() / 2, getHeight() * 2 / 3);
     deck2.setBounds(getWidth() / 2, 0, getWidth() / 2, getHeight() * 2 / 3);
@@ -63,10 +60,7 @@ void MainComponent::resized() {
 
 void MainComponent::paint(juce::Graphics &g)
 {
-    // Your drawing code goes here
-    // For example, fill the background with a color:
     g.fillAll (juce::Colour(42, 46, 51));
-    // Add any other drawing instructions here
 }
 
 // Implementation of loading the track into the selected deck
