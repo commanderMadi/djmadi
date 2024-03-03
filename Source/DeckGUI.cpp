@@ -20,14 +20,17 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse,
                  : djAudioPlayer(_djAudioPlayer),
                    waveFormDisplay(colorToUse, waveFormDefaultMessage, formatManagerToUse, cacheToUse) {
    
-    
+    // custom colors for the play, stop and slider backgrounds
     customPlayButtonColor = std::make_unique<CustomDesign>(juce::Colour(27, 195, 125));
     customStopButtonColor = std::make_unique<CustomDesign>(juce::Colour(234, 21, 34));
     customSliderBackgroundColor = std::make_unique<CustomDesign>(juce::Colour(184, 224, 242));
+    
+    // Setup the buttons
     addAndMakeVisible(playButton);
     addAndMakeVisible(stopButton);
     addAndMakeVisible(loopButton);
     
+    // Set 5 different loop durations in the dropdown list
     loopDurations.addItem("0.25 Second", 1);
     loopDurations.addItem("0.5 Second", 2);
     loopDurations.addItem("1 Second", 3);
@@ -36,15 +39,16 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse,
     loopDurations.setSelectedId(3);
     loopDurations.addListener(this);
 
-
+    // Dropdown menu setup
     addAndMakeVisible(loopDurations);
     loopDurations.setVisible(false);
 
-
+    // Sliders setup
     addAndMakeVisible(gainSlider);
     addAndMakeVisible(speedSlider);
     addAndMakeVisible(posSlider);
-
+                       
+   // Change sliders to rotary
     gainSlider.setSliderStyle(juce::Slider::Rotary);
     gainSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     gainSlider.setLookAndFeel(customSliderBackgroundColor.get());
@@ -57,8 +61,10 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse,
     posSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
     posSlider.setLookAndFeel(customSliderBackgroundColor.get());
 
+    // Setup wave form
     addAndMakeVisible(waveFormDisplay);
     
+    // Setup Deck Labels
     addAndMakeVisible(nowPlayingLabel);
     addAndMakeVisible(gainSliderLabel);
     addAndMakeVisible(speedSliderLabel);
@@ -71,6 +77,7 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse,
     nowPlayingLabel.setJustificationType(juce::Justification::centredLeft);
     gainSliderLabel.setJustificationType(juce::Justification::centredLeft);
 
+    // Set buttons text
     playButton.setButtonText("Play");
     playButton.setLookAndFeel(customPlayButtonColor.get());
     
@@ -79,6 +86,7 @@ DeckGUI::DeckGUI(juce::Colour &colorToUse,
 
     loopButton.setButtonText("Loop");
     
+    // Add event listeners for buttons and sliders
     playButton.addListener(this);
     stopButton.addListener(this);
     loopButton.addListener(this);
@@ -116,6 +124,7 @@ void DeckGUI::buttonClicked(juce::Button* button) {
     
     if (button == &loopButton) {
         bool shouldLoop = loopButton.getToggleState();
+        // Start the loop if the user toggles the button on
         djAudioPlayer->enableLoop(shouldLoop, currentLoopDuration);
 
         if (shouldLoop) {
@@ -158,6 +167,7 @@ void DeckGUI::paint (juce::Graphics& g) {
 
 void DeckGUI::resized() {
 
+    // Initial values to control the width, height, paddings and sizes of the various components
     float rowH = getHeight() / 4;
     int buttonWidth = 100;
     int buttonHeight = 50;
@@ -167,14 +177,18 @@ void DeckGUI::resized() {
     int labelWidth = getWidth() - 20;
     int labelHeight = 20;
 
+    // Play button position
     int playXPosition = (getWidth() - buttonWidth) / 2;
     int playYPosition = (getHeight() - buttonHeight) * 3 / 4;
     
+    // Stop button position
     int stopXPosition = (getWidth() - buttonWidth) / 2;
     int stopYPosition = (getHeight() - buttonHeight) * 3 / 4 + 75;
     
+    // X position for all sliders
     int sliderXPosition = (getWidth() - sliderSize * 3 - xPadding * 2) / 2; // Adjust padding and position
 
+    // Set the boundaries for the waveforms
     waveFormDisplay.setBounds(0, 0, getWidth(), rowH / 1.2);
     int waveFormHeight = waveFormDisplay.getHeight();
 
@@ -187,17 +201,17 @@ void DeckGUI::resized() {
     // Set bounds and style for posSlider
     posSlider.setBounds(sliderXPosition + 2 * (sliderSize + xPadding), waveFormHeight + yPadding, sliderSize, sliderSize);
 
+    // Set the style and boundaries for the buttons and the loops durations dropdown menu
     playButton.setBounds(playXPosition, playYPosition, buttonWidth, buttonHeight);
     stopButton.setBounds(stopXPosition, stopYPosition, buttonWidth, buttonHeight);
     loopButton.setBounds(10, stopYPosition + 50, buttonWidth / 2, buttonHeight);
     loopDurations.setBounds(loopButton.getWidth() + 20, stopYPosition + 60, buttonWidth, buttonHeight / 2);
 
+    // Set the boundaries for the labels
     gainSliderLabel.setBounds(gainSlider.getX() + 26, gainSlider.getY() + 110, labelWidth, labelHeight);
     speedSliderLabel.setBounds(speedSlider.getX() + 26, speedSlider.getY() + 110, labelWidth, labelHeight);
     posSliderLabel.setBounds(posSlider.getX() + 26, posSlider.getY() + 110, labelWidth, labelHeight);
-
     int nowPlayingLabelYPosition = rowH + yPadding - labelHeight - 50; // Adjust the vertical offset as necessary
-    
     nowPlayingLabel.setBounds((getWidth() - labelWidth) / 2, nowPlayingLabelYPosition, labelWidth, labelHeight);
 }
 

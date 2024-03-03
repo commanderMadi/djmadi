@@ -31,11 +31,11 @@ static const unsigned char temp_binary_data_0[] =
 "    addAndMakeVisible(deck2);\r\n"
 "    addAndMakeVisible(playlist);\r\n"
 "    \r\n"
-"    /** Setting up a callback for the LoadIntoDeckCallback in the playlist component.\r\n"
-"        The callback is a lambda function capturing the current instance of the MainComponent.\r\n"
-"         This way, I could pass in the track URL and the deck ID from the playlist properly.\r\n"
+"    /** \r\n"
+"     Setting up a callback for the LoadIntoDeckCallback in the playlist component.\r\n"
+"     The callback is a lambda function capturing the current instance of the MainComponent.\r\n"
+"     This way, I could pass in the track URL and the deck ID from the playlist properly.\r\n"
 "    */\r\n"
-"    \r\n"
 "    playlist.setLoadIntoDeckCallback([this](const juce::String& trackURL, int deckId) {\r\n"
 "        loadFileIntoDeck(trackURL, deckId);\r\n"
 "    });\r\n"
@@ -99,7 +99,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
 
     switch (hash)
     {
-        case 0x39024608:  numBytes = 2823; return MainComponent_cpp;
+        case 0x39024608:  numBytes = 2817; return MainComponent_cpp;
         default: break;
     }
 
